@@ -1,0 +1,54 @@
+<?php ?>
+
+<html lang="us">
+<head>
+	<meta charset="utf-8">
+	<title>Drawing DateBase</title>
+	<link href="css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet">
+	<script src="js/jquery-1.8.3.js"></script>
+	<script src="js/jquery-ui-1.9.2.custom.js"></script>
+	<script src="js/login.js"></script>
+	<script>
+	$(document).ready(function(){			
+		var userName = $( "#userName" ), password = $( "#password" );
+		
+		$( "#dialog-form" ).dialog({
+			autoOpen: true,
+			height: 350,
+			width: 400,
+			modal: true,
+			closeText: "hide",
+			buttons: {
+				"Login": function() {
+					LoginRequest(userName.val(), password.val(), RedirectBack, UpdateTips, RedirectBack);
+				}
+			}
+		});
+
+		$('#password').bind('keypress', function(e) {
+			var code = (e.keyCode ? e.keyCode : e.which);
+			if(code == 13) { //Enter keycode
+			   LoginRequest(userName.val(), password.val(), RedirectBack, UpdateTips, RedirectBack);
+			}
+		});
+		
+		allFields = $( [] ).add( userName ).add( password );
+		
+		
+	});
+	
+	</script>
+</head>
+<body>
+<div id="dialog-form" title="Login">
+	<p id="loginTips"></p>
+    <form>
+    <fieldset>
+        <label for="userName">Name</label>
+        <input type="text" name="userName" id="userName" class="text ui-widget-content ui-corner-all" />
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" value="" class="text ui-widget-content ui-corner-all" />
+    </fieldset>
+    </form>
+</div>
+</body>
