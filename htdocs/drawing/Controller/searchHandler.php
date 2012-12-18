@@ -29,7 +29,7 @@ if ( isset( $_GET["search"] ) && ($_GET["search"] == "range") ){
 	if ( isset($_GET["revisionDate"]) ){
 		$s_revisionDate = addslashes($_GET["revisionDate"]);
 	}
-	if ( isset($_GET["dateOperation"]) ){
+	if ( isset($_GET["dateOperation"]) && !empty($_GET["dateOperation"]) ){
 		$s_dateOperation = addslashes($_GET["dateOperation"]);
 	}
 	
@@ -39,4 +39,10 @@ if ( isset( $_GET["search"] ) && ($_GET["search"] == "range") ){
 	echo json_encode($ret);
 }else if ( isset( $_GET["search"] ) && ($_GET["search"] == "specific") ){
 
+}else{
+	$ret["ret"] = -1;
+	$ret["error"] = "no op";
+	$ret["isSet"] = isset( $_GET["search"] );
+	$ret["search"] = "range";
+	echo json_encode($ret);
 }

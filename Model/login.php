@@ -1,11 +1,29 @@
 <?php
-// it will get a sqlObj for querying DB
+/* this class is the login logic, it provides 4 member function for user 
+ * login/logout
+ * 1. function Login($s_userName, $md5_password);
+ * 		return value
+ *		LOGINSUCC: login successful
+ *		LOGINFAIL: login fail
+ *		SQLERROR: sql error
+ * 2. function Logout(); 
+ *		no return value
+ * 3. function IsLogin();
+ *		return true/false
+ * 4. function RefreshLoginTime();
+ *		return true for refresh done.
+ *		return false for that user has not logined.
+ */
 require_once( __DIR__ . "/connect.php" ); 
-
+require_once( __DIR__ . "/log.php" ); 
 session_start();
 
 define("SQLERROR", -2);
 define("LOGINFAIL", -1);
+/*
+define("ERROR", 0); // general error
+define("SUCCESS", 1); // general success
+*/
 define("LOGINSUCC", 1);
 define("STATELOGIN", 2);
 define("STATELOGOUT", 3);
@@ -37,13 +55,15 @@ class CLogin{
 		// SQLERROR: sql error
 		$_SESSION["loginTime"] = $_SERVER["REQUEST_TIME"];
 		$query = sprintf(
-			"select `UserName`, `Password`, `Permission` from `user`
+			"select `UserName`, `Password`, `Grant` from `user`
 			where `UserName` = '%s' and `Password` = '%s'
 			",
 			$s_userName, $md5_password
 		);
 		$result = $this->sqlObj->query($query);
 		if ($this->sqlObj->error){
+			$log = new CLog("C:\\xampp\\Model\\log.txt");
+			$log->WriteLog($sqlQuery);
 			return SQLERROR;
 		}else if( $row = $result->fetch_row() ){
 			$_SESSION[$this->sID] = true;
@@ -66,6 +86,14 @@ class CLogin{
 		$_SESSION[$this->sID] = false;
 		unset($_SESSION["DBPermission"]);
 		unset($_SESSION["loginTime"]);
+	}
+	public function RefreshLoginTime(){
+		if ( $this->IsLogin() ){
+			$_SESSION["loginTime"] = $_SERVER["REQUEST_TIME"];
+			return true;
+		}else{
+			return false;
+		}
 	}
 }
 

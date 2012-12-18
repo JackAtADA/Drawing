@@ -1,6 +1,7 @@
 <?php
 
 require_once( __DIR__ . "/login.php" );
+require_once( __DIR__ . "/log.php");
 
 class CDBQuery{
 	// the return value of many functions will be an associate array
@@ -14,10 +15,13 @@ class CDBQuery{
 								$s_dateOperation, $s_revisionDate){						
 		$loginObj = new CLogin($this->sqlObj);
 		$ret = array();
+		$ret["rowResult"] = NULL;
 		if ( !$loginObj->IsLogin() ){
 			$ret["error"] = "Permission deny, user has not login";
 			return $ret;
 		}
+		
+		$loginObj->RefreshLoginTime();
 		
 		$sqlQuery = "select `Drawing`.`DrawingNo`, `Drawing`.`Description`,
 					 `DrawingRevision`.`Date`

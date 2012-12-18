@@ -66,9 +66,3 @@ function UpdateTips( data ) {
 		tips.removeClass( "ui-state-highlight", 1500 );
 	}, 500 );
 }
-
-function DebugOutput(data){
-	if ($.browser.chrome){
-		console.log(data);
-	}
-}
