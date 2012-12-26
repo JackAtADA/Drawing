@@ -7,6 +7,8 @@ class CDBQuery{
 	// the return value of many functions will be an associate array
 	// ret["rowResult"] : the fetched row of sql result
 	// ret["error"] : a string contain error message if error occur.
+	// ret["ret"] : value indicate the search operation is successful or not
+	// 			0 for fail, 1 for success
 	public $sqlObj;
 	public function __construct($sqlObj){
 		$this->sqlObj = $sqlObj;
@@ -16,6 +18,7 @@ class CDBQuery{
 		$loginObj = new CLogin($this->sqlObj);
 		$ret = array();
 		$ret["rowResult"] = NULL;
+		$ret["ret"] = 0;
 		if ( !$loginObj->IsLogin() ){
 			$ret["error"] = "Permission deny, user has not login";
 			return $ret;
@@ -24,7 +27,8 @@ class CDBQuery{
 		$loginObj->RefreshLoginTime();
 		
 		$sqlQuery = "select `Drawing`.`DrawingNo`, `Drawing`.`Description`,
-					 `DrawingRevision`.`Date`
+					 `DrawingRevision`.`Date`, `DrawingRevision`.`RevisionNo`,
+					 `DrawingRevision`.`FileLocation`
 					 from `Drawing` left join `DrawingRevision`
 					 on `Drawing`.`DrawingNo` = `DrawingRevision`.`DrawingNo` 
 					 where 1 ";
@@ -34,7 +38,10 @@ class CDBQuery{
 							  and `DrawingRevision`.`Date` %s '%%%s%%'",
 							  $s_drawingNo, $s_description, $s_dateOperation,
 							  $s_revisionDate);
+							  
+		$sqlQuery .= "order by `Drawing`.`DrawingNo` asc, `DrawingRevision`.`Date` desc";
 		$result = $this->sqlObj->query($sqlQuery);
+		
 		
 		if ($this->sqlObj->error){
 			$ret["error"] = "SQL error:" . $this->sqlObj->error;
@@ -42,10 +49,12 @@ class CDBQuery{
 			return $ret;
 		}else{
 			$rowResult = array();
-			while($row = $result->fetch_row() ){
+			//while($row = $result->fetch_row() ){
+			while($row = $result->fetch_assoc() ){
 				$rowResult[] = $row; // ignore the final row which is null
 			}
 			$ret["rowResult"] = $rowResult;
+			$ret["ret"] = 1;
 			return $ret;
 		}
 	}

@@ -37,9 +37,25 @@
 			//DebugOutput( data );
 			
 			//var data1 = {jack: "ok"};
-			$.each(data, function(index, value){
-				DebugOutput( index + ":" + value );
-			});
+			var searchResult = $( "#searchResult" );
+			if ( data.ret == "1"){ // success
+				var num = 0;
+				//var listItem = searchResult.append("<ol></ol>");
+				var itemTable = searchResult.append("<table></table>").find("table");
+				itemTable.addClass("ui-widget");
+				itemTable.append("<tr class='ui-widget-header'><th>Drawing No</th><th>Description</th><th>Revision Date</th><th>Revision Number</th><th>File Location</th></tr>");
+				$.each(data.rowResult, function(index, record){
+					num++;
+					itemTable.append("<tr class='ui-widget-content'></tr>");
+					var item = itemTable.find("tr").last();
+					//item.addClass("ui-widget-content");
+					$.each(record, function(indexN, value){
+						item.append("<td>" + value + "</td>");
+						DebugOutput( indexN + ":" + value );
+					});
+				});
+				$("#numOfResult").append("Search Ruselts:" + num);
+			}
 			
 		}, "json");
 	}
@@ -76,6 +92,23 @@
 			},
 			close: function() {
 				allFields.val( "" ).removeClass( "ui-state-error" );
+			}
+		});
+		
+		$( "#recordDialog" ).dialog({
+			autoOpen: false,
+			//height: 350,
+			//width: 400,
+			modal: true,
+			buttons: {
+				"Update": function() { 
+				},
+				"Cancel": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			close: function() {
+				
 			}
 		});
 		
@@ -117,6 +150,24 @@
     </form>
 </div>
 
+<div id="recordDialog" title="Record">
+	<p id="loginTips"></p>
+    <form>
+    <fieldset>
+        <label for="drawingNo">DrawingNo</label>
+        <input type="text" name="drawingNo" id="drawingNo" class="text ui-widget-content ui-corner-all" />
+        <label for="description">Description</label>
+        <input type="text" name="description" id="description" value="" class="text ui-widget-content ui-corner-all" />
+		<label for="revisionNo">RevisionNo</label>
+        <input type="text" name="revisionNo" id="revisionNo" value="" class="text ui-widget-content ui-corner-all" />
+		<label for="date">Date</label>
+        <input type="text" name="date" id="date" value="" class="text ui-widget-content ui-corner-all" />
+		<label for="fileLocation">FileLocation</label>
+        <input type="text" name="fileLocation" id="fileLocation" value="" class="text ui-widget-content ui-corner-all" />
+    </fieldset>
+    </form>
+</div>
+
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Search and Modify</a></li>
@@ -137,6 +188,9 @@
 			<button id="search">Search</button>
 		</fieldset>
 		</form>
+		<div id="searchResult">
+			<p id="numOfResult"></p>
+		</div>
     </div>
     <div id="tabs-2">
         <p>Insert From (not ready)</p>
@@ -145,4 +199,7 @@
         <p>Temp page.</p>
     </div>
 </div>
+
+
+
 </body>
