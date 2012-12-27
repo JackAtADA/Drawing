@@ -15,7 +15,6 @@ class CLog{
 			if ($this->fp == NULL){
 				$this->fp = fopen('php://stderr', 'w');
 				//$this->stderrFlag = true;
-				//
 			}
 		}
 	}

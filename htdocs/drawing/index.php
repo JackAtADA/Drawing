@@ -5,17 +5,78 @@
 	<meta charset="utf-8">
 	<title>Drawing DateBase</title>
 	<link href="css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet">
+	<link href="css/main.css" />
 	<script src="js/jquery-1.8.3.js"></script>
 	<script src="js/jquery-ui-1.9.2.custom.js"></script>
 	<script src="js/login.js"></script>
 	<script src="js/main.js"></script>
 	<script>
 	// js UI
+	function ColoringAllJTable(){
+		$(".jtable th").each(function(){
+			$(this).addClass("ui-widget-header");
+		});
+		$(".jtable td").each(function(){
+			$(this).addClass("ui-widget-content");
+		});
+		$(".jtable tr").hover(
+			function()
+			{
+				$(this).children("td").addClass("ui-state-hover");
+			},
+			function()
+			{
+				$(this).children("td").removeClass("ui-state-hover");
+			}
+		);
+		$(".jtable tr").click(function(){
+			$(this).children("td").toggleClass("ui-state-highlight");
+		});
+	}
 	function DialogSubmit(userName, password) {
 		LoginRequest(userName, password, 
 			function(){$("#dialog-form").dialog("close")},
 			UpdateTips
 		);
+	}
+	function InitResultButton( recordID ){
+		$( "#record" + recordID ).button({
+            text: false,
+            icons: {
+                primary: "ui-icon-newwin"
+            }
+        }).click( function(){
+			SearchDetailRecordInfo(recordID);
+		});
+	}
+	function SearchDetailRecordInfo( recordID ){
+		//alert("still in development");
+		var searchField = {
+			"recordID": recordID, 
+			"search": "specific"
+		};
+		$.get("Controller/searchHandler.php", searchField, function(data){
+			if ( data.ret == "1"){ // success
+				$( "#recordDialog" ).dialog( "open" );
+				if ( typeof data.rowResult[0] == "undefined"){
+					return;
+				}
+				var record = data.rowResult[0];
+				$( "#drawingNoResult" ).val( record["DrawingNo"] );
+				$( "#descriptionResult" ).val( record["Description"] );
+				$( "#revisionNoResult" ).val( record["RevisionNo"] ); 
+				$( "#typeNameResult" ).val( record["TypeName"] );
+				$( "#fileLocationResult" ).val( record["FileLocation"] );
+				$( "#dateResult" ).val( record["Date"] );
+				$( "#workOrderResult" ).val( record["WorkOrder"] );
+				$( "#followUpResult" ).val( record["FollowUp"] );
+			}else{
+				alert(data.error);
+				if (data.error == "Permission deny, user has not login"){
+					$( "#dialog-form" ).dialog( "open" );
+				}
+			}
+		}, "json");
 	}
 	function SubmitSearchFrom(e){
 		e.preventDefault();
@@ -38,23 +99,41 @@
 			
 			//var data1 = {jack: "ok"};
 			var searchResult = $( "#searchResult" );
+			searchResult.empty();
 			if ( data.ret == "1"){ // success
 				var num = 0;
-				//var listItem = searchResult.append("<ol></ol>");
 				var itemTable = searchResult.append("<table></table>").find("table");
-				itemTable.addClass("ui-widget");
-				itemTable.append("<tr class='ui-widget-header'><th>Drawing No</th><th>Description</th><th>Revision Date</th><th>Revision Number</th><th>File Location</th></tr>");
+				//itemTable.addClass("ui-widget");
+				//itemTable.addClass("resultTable");
+				itemTable.addClass("jtable");
+				//itemTable.append("<tr class='ui-widget-header'><th></th><th>Drawing No</th><th>Description</th><th>Revision Date</th><th>Revision Number</th><th>File Location</th></tr>");
+				itemTable.append("<tr><th></th><th>Drawing No</th><th>Description</th><th>Revision Date</th><th>Revision Number</th><th>File Location</th></tr>");
 				$.each(data.rowResult, function(index, record){
 					num++;
-					itemTable.append("<tr class='ui-widget-content'></tr>");
+					//itemTable.append("<tr class='ui-widget-content'></tr>");
+					//itemTable.append("<tr class='resultTable'></tr>");
+					itemTable.append("<tr></tr>");
 					var item = itemTable.find("tr").last();
 					//item.addClass("ui-widget-content");
 					$.each(record, function(indexN, value){
-						item.append("<td>" + value + "</td>");
-						DebugOutput( indexN + ":" + value );
+						if (indexN == "RecordID"){
+							item.append("<td><button id='record" + record["RecordID"] + "'></button></td>");
+						}else if (indexN == "TypeName"){
+							// skip
+						}else{
+							//item.append("<td class='resultTable'>" + value + "</td>");
+							item.append("<td>" + value + "</td>");
+						}
 					});
+					InitResultButton( record["RecordID"]  );
 				});
-				$("#numOfResult").append("Search Ruselts:" + num);
+				ColoringAllJTable();
+				$("#numOfResult").html("Search Ruselts:" + num);
+			}else{
+				if (data.error == "Permission deny, user has not login"){
+					alert(data.error);
+					$( "#dialog-form" ).dialog( "open" );
+				}
 			}
 			
 		}, "json");
@@ -98,10 +177,10 @@
 		$( "#recordDialog" ).dialog({
 			autoOpen: false,
 			//height: 350,
-			//width: 400,
+			width: 500,
 			modal: true,
 			buttons: {
-				"Update": function() { 
+				"Update(not ready)": function() { 
 				},
 				"Cancel": function() {
 					$( this ).dialog( "close" );
@@ -150,20 +229,53 @@
     </form>
 </div>
 
+<!--
+<div id="testDIV">
+	<form>
+	<fieldset>
+	<input type="text" name="test" id="test" value="testString" class="text ui-widget-content ui-corner-all" />
+	</fieldset>
+	</form>
+</div>
+-->
+
 <div id="recordDialog" title="Record">
-	<p id="loginTips"></p>
     <form>
     <fieldset>
-        <label for="drawingNo">DrawingNo</label>
-        <input type="text" name="drawingNo" id="drawingNo" class="text ui-widget-content ui-corner-all" />
-        <label for="description">Description</label>
-        <input type="text" name="description" id="description" value="" class="text ui-widget-content ui-corner-all" />
-		<label for="revisionNo">RevisionNo</label>
-        <input type="text" name="revisionNo" id="revisionNo" value="" class="text ui-widget-content ui-corner-all" />
-		<label for="date">Date</label>
-        <input type="text" name="date" id="date" value="" class="text ui-widget-content ui-corner-all" />
-		<label for="fileLocation">FileLocation</label>
-        <input type="text" name="fileLocation" id="fileLocation" value="" class="text ui-widget-content ui-corner-all" />
+		<table class="ui-widget">
+		<tr>
+			<td><label for="drawingNoResult">DrawingNo</label></td>
+			<td><input type="text" name="drawingNoResult" id="drawingNoResult" class="text ui-widget-content ui-corner-all" /></td>
+		</tr>
+        <tr>
+			<td><label for="descriptionResult">Description</label></td>
+			<td><textarea name="descriptionResult" id="descriptionResult" rows="5" cols="30" maxlength="1023" class="text ui-widget-content ui-corner-all"></textarea></td>
+		</tr>
+		<tr>
+			<td><label for="revisionNoResult">RevisionNo</label></td>
+        	<td><input type="text" name="revisionNoResult" id="revisionNoResult" value="" class="text ui-widget-content ui-corner-all" /></td>
+		</tr>
+		<tr>
+			<td><label for="dateResult">Date</label></td>
+        	<td><input type="text" name="dateResult" id="dateResult" value="" class="text ui-widget-content ui-corner-all" /></td>
+		</tr>
+		<tr>
+			<td><label for="fileLocationResult">FileLocation</label></td>
+        	<td><input type="text" name="fileLocationResult" id="fileLocationResult" value="" class="text ui-widget-content ui-corner-all" /></td>
+		</tr>
+		<tr>
+			<td><label for="typeNameResult">FileType</label></td>
+			<td><input type="text" name="typeNameResult" id="typeNameResult" value="" class="text ui-widget-content ui-corner-all" /></td>
+		</tr>
+		<tr>
+			<td><label for="workOrderResult">WorkOrder</label></td>
+			<td><input type="text" name="workOrderResult" id="workOrderResult" value="" class="text ui-widget-content ui-corner-all" /></td>
+		</tr>
+		<tr>
+			<td><label for="followUpResult">FollowUp</label></td>
+			<td><input type="text" name="followUpResult" id="followUpResult" value="" class="text ui-widget-content ui-corner-all" /></td>
+		</tr>
+		</table>
     </fieldset>
     </form>
 </div>
@@ -181,15 +293,15 @@
 			<label for="drawingNo">Drawing No.</label>
 			<input type="text" name="drawingNo" id="drawingNo" class="text ui-widget-content ui-corner-all" />
 			<label for="description">Description</label>
-			<input type="password" name="description" id="description" value="" class="text ui-widget-content ui-corner-all" />
+			<input type="text" name="description" id="description" value="" class="text ui-widget-content ui-corner-all" />
 			<label for="date">Revision Date (after)</label>
-			<input type="password" name="revisionDate" id="revisionDate" value="" class="text ui-widget-content ui-corner-all" />
-			<input type="hidden" name="op" id="dateOperation" value=">"></input>
+			<input type="text" name="revisionDate" id="revisionDate" value="" class="text ui-widget-content ui-corner-all" />
+			<input type="hidden" name="op" id="dateOperation" value=">="></input>
 			<button id="search">Search</button>
 		</fieldset>
 		</form>
+		<p id="numOfResult"></p>
 		<div id="searchResult">
-			<p id="numOfResult"></p>
 		</div>
     </div>
     <div id="tabs-2">

@@ -16,7 +16,7 @@ require_once( $gModelPath . "/DBQuery.php" );
 
 if ( isset( $_GET["search"] ) && ($_GET["search"] == "range") ){
 	//default value
-	$s_dateOperation = ">";
+	$s_dateOperation = ">=";
 	$s_drawingNo = "";
 	$s_description = "";
 	$s_revisionDate = "0000-00-00 00:00:00";
@@ -38,7 +38,17 @@ if ( isset( $_GET["search"] ) && ($_GET["search"] == "range") ){
 	$ret = $dbQuery->RangeSearch($s_drawingNo, $s_description, $s_dateOperation, $s_revisionDate);
 	echo json_encode($ret);
 }else if ( isset( $_GET["search"] ) && ($_GET["search"] == "specific") ){
-
+	// default value -- no result output
+	$s_recordID = -1;
+	
+	if ( isset($_GET["recordID"]) ){
+		$s_recordID = intval($_GET["recordID"]);
+	}
+	
+	$dbQuery = new CDBQuery($gSqlObj);
+	
+	$ret = $dbQuery->SpecificSearch($s_recordID);
+	echo json_encode($ret);
 }else{
 	$ret["ret"] = -1;
 	$ret["error"] = "no op";

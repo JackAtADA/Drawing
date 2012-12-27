@@ -1,6 +1,5 @@
 <?php
-
+// controller configure
 $gModelPath = "C:\\xampp\\Model";
-$gLogFile = "C:\\xampp\\Model\\Log\\Log.txt";
-
+require_once( $gModelPath."/modelConfigure.php");
 ?>
