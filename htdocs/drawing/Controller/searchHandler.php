@@ -52,7 +52,5 @@ if ( isset( $_GET["search"] ) && ($_GET["search"] == "range") ){
 }else{
 	$ret["ret"] = -1;
 	$ret["error"] = "no op";
-	$ret["isSet"] = isset( $_GET["search"] );
-	$ret["search"] = "range";
 	echo json_encode($ret);
 }

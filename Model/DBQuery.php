@@ -111,5 +111,48 @@ class CDBQuery{
 			return $ret;
 		}
 	}
+	public function Insert($s_para){
+		$ret = array();
+		$ret["rowResult"] = NULL;
+		$ret["ret"] = 0;
+		if ( !$this->loginObj->IsLogin() ){
+			$ret["error"] = "Permission deny, user has not login";
+			return $ret;
+		}
+		
+		$this->loginObj->RefreshLoginTime();
+		$this->InsertDrawingRevision($s_para);
+	}
+	private function InsertDrawingRevision($s_para){
+		$sqlQuery = sprintf(
+			"INSERT into `DrawingRevision` (
+				`DrawingNo`, `RevisionNo`, `FileType`, `FileLocation`,
+				`Date`, `WorkOrder`, `FollowUp`
+			) VALUES (
+				'%s', '%s', %d, '%s', '%s', '%s', '%s'
+			)",
+			$s_para["drawingNo"], $s_para["revisionNo"], 
+			$s_para["fileType"], $s_para["fileLocation"], 
+			$s_para["date"], $s_para["workOrder"], 
+			$s_para["followUp"]
+		);
+		
+		$result = $this->sqlObj->query($sqlQuery);
+		
+		
+		if ($this->sqlObj->error){
+			$ret["error"] = "SQL error:" . $this->sqlObj->error;
+			//echo "<br>" . $sqlQuery;
+			return $ret;
+		}else{
+			$rowResult = array();
+			while($row = $result->fetch_assoc() ){
+				$rowResult[] = $row; // ignore the final row which is null
+			}
+			$ret["rowResult"] = $rowResult;
+			$ret["ret"] = 1;
+			return $ret;
+		}
+	}
 }
 ?>

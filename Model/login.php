@@ -82,6 +82,13 @@ class CLogin{
 			return false;
 		}
 	}
+	public function IsPermitToUpdateDB(){
+		if ($_SESSION["DBPermission"] == "RW"){
+			return true;
+		}else{
+			return false;
+		}
+	}
 	public function Logout(){
 		$_SESSION[$this->sID] = false;
 		unset($_SESSION["DBPermission"]);

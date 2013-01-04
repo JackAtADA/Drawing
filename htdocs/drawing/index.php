@@ -10,6 +10,7 @@
 	<script src="js/jquery-ui-1.9.2.custom.js"></script>
 	<script src="js/login.js"></script>
 	<script src="js/main.js"></script>
+	<script src="js/insert.js"></script>
 	<script>
 	// js UI
 	function ColoringAllJTable(){
@@ -64,6 +65,7 @@
 				var record = data.rowResult[0];
 				$( "#drawingNoResult" ).val( record["DrawingNo"] );
 				$( "#descriptionResult" ).val( record["Description"] );
+				$( "#referenceDrawingNoResult" ).val( record["DrawingNo"] );
 				$( "#revisionNoResult" ).val( record["RevisionNo"] ); 
 				$( "#typeNameResult" ).val( record["TypeName"] );
 				$( "#fileLocationResult" ).val( record["FileLocation"] );
@@ -180,11 +182,12 @@
 			width: 500,
 			modal: true,
 			buttons: {
+				/*
 				"Update(not ready)": function() { 
 				},
 				"Cancel": function() {
 					$( this ).dialog( "close" );
-				}
+				}*/
 			},
 			close: function() {
 				
@@ -207,6 +210,8 @@
                 primary: "ui-icon-search"
             }
         }).click(SubmitSearchFrom);
+		
+		InitInsertTab();
 	});
 	
 	</script>
@@ -239,17 +244,23 @@
 </div>
 -->
 
-<div id="recordDialog" title="Record">
+<div id="recordDialog" title="Revision Record">
     <form>
     <fieldset>
 		<table class="ui-widget">
 		<tr>
 			<td><label for="drawingNoResult">DrawingNo</label></td>
-			<td><input type="text" name="drawingNoResult" id="drawingNoResult" class="text ui-widget-content ui-corner-all" /></td>
+			<td><input type="text" name="drawingNoResult" id="drawingNoResult" disabled class="text ui-widget-content ui-corner-all ui-state-disabled"/></td>
 		</tr>
         <tr>
 			<td><label for="descriptionResult">Description</label></td>
-			<td><textarea name="descriptionResult" id="descriptionResult" rows="5" cols="30" maxlength="1023" class="text ui-widget-content ui-corner-all"></textarea></td>
+			<td><textarea name="descriptionResult" id="descriptionResult" rows="5" cols="30" maxlength="1023" class="text ui-widget-content ui-corner-all ui-state-disabled" disabled></textarea></td>
+		</tr>
+		<tr><td colspan="2"  align="right"><button id="modifyDrawingRecordButton">Modify the Drawing Record(not ready)</button></td></tr>
+		<tr><td colspan="2"><hr/></td></tr>
+		<tr>
+			<td><label for="referenceDrawingNoResult">Reference to DrawingNo</label></td>
+			<td><input type="text" name="referenceDrawingNoResult" id="referenceDrawingNoResult" class="text ui-widget-content ui-corner-all" /></td>
 		</tr>
 		<tr>
 			<td><label for="revisionNoResult">RevisionNo</label></td>
@@ -275,6 +286,7 @@
 			<td><label for="followUpResult">FollowUp</label></td>
 			<td><input type="text" name="followUpResult" id="followUpResult" value="" class="text ui-widget-content ui-corner-all" /></td>
 		</tr>
+		<tr><td colspan="2" align="right"><button id="updateRevisionButton">Update Revision(not ready)</button></td></tr>
 		</table>
     </fieldset>
     </form>
@@ -306,6 +318,56 @@
     </div>
     <div id="tabs-2">
         <p>Insert From (not ready)</p>
+		<!-- the controll js for this tabs is in js/insert.js -->
+		<div id="recordInsert" title="Record">
+			<form>
+			<fieldset>
+				<table class="ui-widget">
+				<tr>
+					<td colspan="2">
+					<div id="newRecordRadio">
+						<input type="radio" id="radio1" name="insertType" value="drawing"/><label for="radio1">New Drawing</label>
+						<input type="radio" id="radio2" name="insertType" value="revision" checked="checked" /><label for="radio2">New Revision</label>
+					</div>
+					</td>
+				</tr>
+				<tr>
+					<td><label for="drawingNew">DrawingNo</label></td>
+					<td><input type="text" name="drawingNew" id="drawingNew" class="text ui-widget-content ui-corner-all" size="30" maxlength="254"/></td>
+				</tr>
+				<tr>
+					<td><label for="descriptionNew">Description</label></td>
+					<td><textarea name="descriptionNew" id="descriptionNew" rows="5" cols="30" maxlength="1023" class="text ui-widget-content ui-corner-all ui-state-disabled"></textarea></td>
+				</tr>
+				<tr>
+					<td><label for="revisionNoNew">RevisionNo</label></td>
+					<td><input type="text" name="revisionNoNew" id="revisionNoNew" value="" class="text ui-widget-content ui-corner-all" size="30" maxlength="254"/></td>
+				</tr>
+				<tr>
+					<td><label for="dateNew">Date</label></td>
+					<td><input type="text" name="dateNew" id="dateNew" value="" class="text ui-widget-content ui-corner-all" size="30"/></td>
+				</tr>
+				<tr>
+					<td><label for="fileLocationNew">FileLocation</label></td>
+					<td><input type="text" name="fileLocationNew" id="fileLocationNew" value="" class="text ui-widget-content ui-corner-all" size="30" maxlength="1023"/></td>
+				</tr>
+				<tr>
+					<td><label for="typeNameNew">FileType</label></td>
+					<td><input type="text" name="typeNameNew" id="typeNameNew" value="" class="text ui-widget-content ui-corner-all" size="30" maxlength="254"/></td>
+				</tr>
+				<tr>
+					<td><label for="workOrderNew">WorkOrder</label></td>
+					<td><input type="text" name="workOrderNew" id="workOrderNew" value="" class="text ui-widget-content ui-corner-all" size="30" maxlength="254"/></td>
+				</tr>
+				<tr>
+					<td><label for="followUpNew">FollowUp</label></td>
+					<td><input type="text" name="followUpNew" id="followUpNew" value="" class="text ui-widget-content ui-corner-all" size="30" maxlength="254"/></td>
+				</tr>
+				<tr><td colspan="2" align="right"><button id="submitNew">New</button></td></tr>
+				</table>
+			</fieldset>
+			</form>
+		</div>
     </div>
     <div id="tabs-3">
         <p>Temp page.</p>
