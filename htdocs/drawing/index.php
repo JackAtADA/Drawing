@@ -97,9 +97,7 @@
 		
 		$.get("Controller/searchHandler.php", searchField, function(data){
 			//DebugOutput( searchField );
-			//DebugOutput( data );
 			
-			//var data1 = {jack: "ok"};
 			var searchResult = $( "#searchResult" );
 			searchResult.empty();
 			if ( data.ret == "1"){ // success
@@ -122,6 +120,8 @@
 							item.append("<td><button id='record" + record["RecordID"] + "'></button></td>");
 						}else if (indexN == "TypeName"){
 							// skip
+						}else if (indexN == "FileLocation"){
+							item.append("<td><a href='" + value + "'>" + value + "</a></td>");
 						}else{
 							//item.append("<td class='resultTable'>" + value + "</td>");
 							item.append("<td>" + value + "</td>");
@@ -332,8 +332,8 @@
 					</td>
 				</tr>
 				<tr>
-					<td><label for="drawingNew">DrawingNo</label></td>
-					<td><input type="text" name="drawingNew" id="drawingNew" class="text ui-widget-content ui-corner-all" size="30" maxlength="254"/></td>
+					<td><label for="drawingNoNew">DrawingNo</label></td>
+					<td><input type="text" name="drawingNoNew" id="drawingNoNew" class="text ui-widget-content ui-corner-all" size="30" maxlength="254"/></td>
 				</tr>
 				<tr>
 					<td><label for="descriptionNew">Description</label></td>

@@ -20,10 +20,8 @@ session_start();
 
 define("SQLERROR", -2);
 define("LOGINFAIL", -1);
-/*
 define("ERROR", 0); // general error
 define("SUCCESS", 1); // general success
-*/
 define("LOGINSUCC", 1);
 define("STATELOGIN", 2);
 define("STATELOGOUT", 3);

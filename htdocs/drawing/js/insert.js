@@ -1,17 +1,13 @@
 function SubmitInsertForm(e){
 	e.preventDefault();
 	
-	/*
-	var drawingNo = $( "#drawingNoNew" );
 	var insertType = $('input[name="insertType"]:checked').val();
-	var description;
-	if (insertType == "drawing"){
-		description = $( "#descriptionNew" );
-	}
 	
-	searchField = {
-		"drawingNo": drawingNo.val(), 
-		"description": description.val(),
+	updateField = {
+		"insertType": insertType,
+		"drawingNo": $( "#drawingNoNew" ).val(), 
+		"description": $( "#descriptionNew" ).val(),
+		"revisionNo": $("#revisionNoNew").val(),
 		"date": $( "#dateNew").val(),
 		"fileLocation": $( "#fileLocationNew" ).val(),
 		"typeName": $("#typeNameNew").val(),
@@ -21,12 +17,34 @@ function SubmitInsertForm(e){
 	};
 	
 	$.get("Controller/updateHandler.php", updateField, function(data){
-		
-		
+		//$.each(data, function (index, value){
+			//DebugOutput(index + ":" + value);
+		//});
+		if (data.ret == 1){
+			alert("insert successful");
+			var IDs = [ 
+				"#drawingNoNew",
+				"#descriptionNew",
+				"#revisionNoNew",
+				"#dateNew",
+				"#fileLocationNew",
+				"#typeNameNew",
+				"#workOrderNew",
+				"#followUpNew"
+			];
+			ClearValues(IDs);
+		}else{
+			alert(data.error);
+		}
 	}, "json");
-	*/
 }
 
+function ClearValues( IDs ) {
+	$.each( IDs, function (index, ID){
+		DebugOutput(ID + ":" + $( ID ).val());
+		$( ID ).val("");
+	});
+}
 
 function ChangeStateOfInsertForm(newDrawing){
 	if (newDrawing == true){
