@@ -1,5 +1,5 @@
 <?php ?>
-
+<!DOCTYPE HTML>
 <html lang="us">
 <head>
 	<meta charset="utf-8">
@@ -317,7 +317,7 @@
 		</div>
     </div>
     <div id="tabs-2">
-        <p>Insert From (not ready)</p>
+        <p>Insert From</p>
 		<!-- the controll js for this tabs is in js/insert.js -->
 		<div id="recordInsert" title="Record">
 			<form>
@@ -326,7 +326,7 @@
 				<tr>
 					<td colspan="2">
 					<div id="newRecordRadio">
-						<input type="radio" id="radio1" name="insertType" value="drawing"/><label for="radio1">New Drawing</label>
+						<input type="radio" id="radio1" name="insertType" value="drawing"/><label for="radio1">New Drawing (not ready)</label>
 						<input type="radio" id="radio2" name="insertType" value="revision" checked="checked" /><label for="radio2">New Revision</label>
 					</div>
 					</td>
@@ -337,7 +337,7 @@
 				</tr>
 				<tr>
 					<td><label for="descriptionNew">Description</label></td>
-					<td><textarea name="descriptionNew" id="descriptionNew" rows="5" cols="30" maxlength="1023" class="text ui-widget-content ui-corner-all ui-state-disabled"></textarea></td>
+					<td><textarea name="descriptionNew" id="descriptionNew" rows="5" cols="30" maxlength="1023" disabled class="text ui-widget-content ui-corner-all ui-state-disabled"></textarea></td>
 				</tr>
 				<tr>
 					<td><label for="revisionNoNew">RevisionNo</label></td>

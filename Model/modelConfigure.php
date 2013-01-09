@@ -1,5 +1,5 @@
 <?php
 // model configure
-$gLogFile = "C:\\xampp\\Model\\Log\\Log.txt";
+$gLogFile = __DIR__ . "\\Log\\Log.txt";
 
 ?>
