@@ -70,6 +70,23 @@ function InitInsertTab(){
 	});
 	$( "#submitNew" ).button().click(SubmitInsertForm);
 	$( "#dateNew" ).datepicker({ dateFormat: "yy-mm-dd" });
-	
+		
+	$('#fileupload').fileupload({
+		dataType: 'json',
+		done: function (e, data) {
+			console.log("done");
+			$.each(data.result.files, function (index, file) {
+				$('<p/>').text(file.name).appendTo(document.body);
+			});
+		},
+		progressall: function (e, data) {
+			var progress = parseInt(data.loaded / data.total * 100, 10);
+			console.log("progress:" + progress);
+			$('#progress').css(
+				'width',
+				progress + '%'
+			);
+		}
+	});
 	
 }

@@ -4,14 +4,17 @@
 <head>
 	<meta charset="utf-8">
 	<title>Drawing DateBase</title>
-	<link href="css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet">
-	<link href="css/main.css" />
+	<link href="css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet" />
+	<link href="css/main.css" rel="stylesheet" />
 	<script src="js/jquery-1.8.3.js"></script>
 	<script src="js/jquery-ui-1.9.2.custom.js"></script>
 	<script src="js/login.js"></script>
 	<script src="js/main.js"></script>
 	<script src="js/insert.js"></script>
 	<script src="js/search.js"></script>
+	<script src="js/vendor/jquery.ui.widget.js"></script>
+	<script src="js/jquery.iframe-transport.js"></script>
+	<script src="js/jquery.fileupload.js"></script>
 	<script>
 	// js UI
 	function DialogSubmit(userName, password) {
@@ -240,6 +243,10 @@
 				<tr>
 					<td><label for="fileLocationNew">FileLocation</label></td>
 					<td><input type="text" name="fileLocationNew" id="fileLocationNew" value="" class="text ui-widget-content ui-corner-all" size="30" maxlength="1023"/></td>
+				</tr>
+				<tr>
+					<td><input id="fileupload" type="file" name="files[]" data-url="Controller/Uploads/" multiple></td>
+					<td><div id="progress" class="bar" style="width: 10%;"></div></td>
 				</tr>
 				<tr>
 					<td><label for="typeNameNew">FileType</label></td>
