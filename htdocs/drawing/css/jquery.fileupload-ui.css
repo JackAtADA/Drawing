@@ -13,7 +13,7 @@
 .fileinput-button {
   position: relative;
   overflow: hidden;
-  float: left;
+  float: right;
   margin-right: 5px;
 }
 .fileinput-button input {

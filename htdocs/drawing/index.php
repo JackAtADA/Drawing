@@ -6,6 +6,7 @@
 	<title>Drawing DateBase</title>
 	<link href="css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet" />
 	<link href="css/main.css" rel="stylesheet" />
+	<link href="css/jquery.fileupload-ui.css" rel="stylesheet" />
 	<script src="js/jquery-1.8.3.js"></script>
 	<script src="js/jquery-ui-1.9.2.custom.js"></script>
 	<script src="js/login.js"></script>
@@ -15,6 +16,7 @@
 	<script src="js/vendor/jquery.ui.widget.js"></script>
 	<script src="js/jquery.iframe-transport.js"></script>
 	<script src="js/jquery.fileupload.js"></script>
+	<script src="js/jquery.fileupload-ui.js"></script>
 	<script>
 	// js UI
 	function DialogSubmit(userName, password) {
@@ -245,10 +247,6 @@
 					<td><input type="text" name="fileLocationNew" id="fileLocationNew" value="" class="text ui-widget-content ui-corner-all" size="30" maxlength="1023"/></td>
 				</tr>
 				<tr>
-					<td><input id="fileupload" type="file" name="files[]" data-url="Controller/Uploads/" multiple></td>
-					<td><div id="progress" class="bar" style="width: 10%;"></div></td>
-				</tr>
-				<tr>
 					<td><label for="typeNameNew">FileType</label></td>
 					<td><input type="text" name="typeNameNew" id="typeNameNew" value="" class="text ui-widget-content ui-corner-all" size="30" maxlength="254"/></td>
 				</tr>
@@ -260,7 +258,23 @@
 					<td><label for="followUpNew">FollowUp</label></td>
 					<td><input type="text" name="followUpNew" id="followUpNew" value="" class="text ui-widget-content ui-corner-all" size="30" maxlength="254"/></td>
 				</tr>
-				<tr><td colspan="2" align="right"><button id="submitNew">New</button></td></tr>
+				<tr>
+					<td>
+						<span class="fileinput-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary">
+							<span class="ui-button-text">Add files...</span>
+							<input id="fileupload" type="file" name="files[]" data-url="Controller/Uploads/">
+						</span>
+					</td>
+					<td><label id="fileNameNew"></label></td>
+				</tr>
+				<tr>
+					<td colspan="2"><div id="progress" class="bar" style="width: 0%;"></div></td>
+				</tr>
+				<tr>
+					<td>
+					</td>
+					<td align="right"><button id="submitNew">New</button></td>
+				</tr>
 				</table>
 			</fieldset>
 			</form>

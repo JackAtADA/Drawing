@@ -1,6 +1,8 @@
-function SubmitInsertForm(e){
-	e.preventDefault();
+function SubmitInsertForm(fileName){
+	//e.preventDefault();
 	
+	DebugOutput(fileName);
+	/*
 	var insertType = $('input[name="insertType"]:checked').val();
 	
 	updateField = {
@@ -40,6 +42,7 @@ function SubmitInsertForm(e){
 			}
 		}
 	}, "json");
+	*/
 }
 
 function ClearValues( IDs ) {
@@ -68,20 +71,37 @@ function InitInsertTab(){
 	$( "#radio2" ).click(function(){
 		ChangeStateOfInsertForm(false);
 	});
-	$( "#submitNew" ).button().click(SubmitInsertForm);
+	$( "#submitNew" ).button();
 	$( "#dateNew" ).datepicker({ dateFormat: "yy-mm-dd" });
 		
 	$('#fileupload').fileupload({
 		dataType: 'json',
+		singleFileUploads: false, 
+		add: function (e, data) {
+			DebugOutput(data);
+			$("#submitNew").unbind('click');
+			$( "#fileNameNew" ).html(data.files[0].name);
+			$( "#submitNew" ).click(function (event){
+				event.preventDefault();
+				data.submit();
+			});
+			$('#progress').css(
+				'width', '0%'
+			);
+		},
 		done: function (e, data) {
-			console.log("done");
+			DebugOutput("done");
+			SubmitInsertForm(data.result.files[0].name);
+			/*
 			$.each(data.result.files, function (index, file) {
+				
 				$('<p/>').text(file.name).appendTo(document.body);
 			});
+			*/
 		},
 		progressall: function (e, data) {
 			var progress = parseInt(data.loaded / data.total * 100, 10);
-			console.log("progress:" + progress);
+			DebugOutput("progress:" + progress);
 			$('#progress').css(
 				'width',
 				progress + '%'
