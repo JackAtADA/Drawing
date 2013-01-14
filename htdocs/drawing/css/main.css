@@ -1,2 +1,6 @@
 .resultTable { border: 10px; border-color: #0000FF; padding-top: 8px; color: #0000FF;}
 .disabledField{ background-color: #F00; }
+.bar {
+	height: 18px;
+	background: green;
+}

@@ -35,6 +35,9 @@ function SubmitInsertForm(e){
 			ClearValues(IDs);
 		}else{
 			alert(data.error);
+			if (data.error == "Permission deny, user has not login"){
+				$( "#dialog-form" ).dialog( "open" );
+			}
 		}
 	}, "json");
 }
@@ -65,7 +68,8 @@ function InitInsertTab(){
 	$( "#radio2" ).click(function(){
 		ChangeStateOfInsertForm(false);
 	});
-	$( "#submitNew").button().click(SubmitInsertForm);
+	$( "#submitNew" ).button().click(SubmitInsertForm);
+	$( "#dateNew" ).datepicker({ dateFormat: "yy-mm-dd" });
 	
 	
 }

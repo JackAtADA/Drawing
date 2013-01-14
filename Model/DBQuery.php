@@ -31,7 +31,7 @@ class CDBQuery{
 		
 		$sqlQuery = "select `DrawingRevision`.`RecordID`, 
 					 `Drawing`.`DrawingNo`, `Drawing`.`Description`,
-					 `DrawingRevision`.`Date`, `DrawingRevision`.`RevisionNo`,
+					 Date(`DrawingRevision`.`Date`) as `Date`, `DrawingRevision`.`RevisionNo`,
 					 `DrawingRevision`.`FileLocation`, `FileType`.`TypeName`
 					 from `Drawing` left join `DrawingRevision`
 					 on `Drawing`.`DrawingNo` = `DrawingRevision`.`DrawingNo`
@@ -83,7 +83,7 @@ class CDBQuery{
 					 `DrawingRevision`.`RevisionNo`, 
 					 `FileType`.`TypeName`, 
 					 `DrawingRevision`.`FileLocation`,
-					 `DrawingRevision`.`Date`, 
+					 Date(`DrawingRevision`.`Date`) as `Date`, 
 					 `DrawingRevision`.`WorkOrder`,
 					 `DrawingRevision`.`FollowUp`
 					 from `DrawingRevision` left join `Drawing`
@@ -122,7 +122,7 @@ class CDBQuery{
 		
 		$this->loginObj->RefreshLoginTime();
 		if ($s_para["insertType"] == "drawing"){
-			
+			$ret = $this->InsertDrawing($s_para);
 		}else if ($s_para["insertType"] == "revision"){
 			$ret = $this->InsertDrawingRevision($s_para);
 		}
@@ -132,7 +132,6 @@ class CDBQuery{
 		$ret = array();
 		$ret["rowResult"] = NULL;
 		$ret["ret"] = 0;
-		
 		
 		// acquire lock
 		$sqlQuery = "Lock Tables `Drawing` Read, `DrawingRevision` Write, `FileType` Write";
@@ -163,6 +162,13 @@ class CDBQuery{
 				return $ret;
 			}
 		}
+		return $this->_InsertDrawingRevision($s_para);
+		
+	}
+	private function _InsertDrawingRevision($s_para){
+		$ret = array();
+		$ret["rowResult"] = NULL;
+		$ret["ret"] = 0;
 		
 		// check typeName 's reference
 		$sqlQuery = sprintf(
@@ -196,40 +202,123 @@ class CDBQuery{
 			}
 		}
 		
+		$fileLocation = $this->FormatEmptyStringValue($s_para["fileLocation"]);
+		$workOrder = $this->FormatEmptyStringValue($s_para["workOrder"]);
+		$followUp = $this->FormatEmptyStringValue($s_para["followUp"]);
+		
 		$sqlQuery = sprintf(
 			"INSERT into `DrawingRevision` (
-				`DrawingNo`, `RevisionNo`, `FileType`, `FileLocation`,
-				`Date`, `WorkOrder`, `FollowUp`
+				`DrawingNo`, `RevisionNo`, `Date`, `FileType`, 
+				`FileLocation`, `WorkOrder`, `FollowUp`
 			) VALUES (
-				'%s', '%s', %d, '%s', '%s', '%s', '%s'
+				'%s', '%s', '%s', '%d', %s, %s, %s
 			)",
-			$s_para["drawingNo"], $s_para["revisionNo"], 
-			$typeID, $s_para["fileLocation"], 
-			$s_para["date"], $s_para["workOrder"], 
-			$s_para["followUp"]
+			$s_para["drawingNo"], $s_para["revisionNo"], $s_para["date"],
+			$typeID, $fileLocation, $workOrder, $followUp
 		);
 		
 		$result = $this->sqlObj->query($sqlQuery);
 		
 		if ($this->sqlObj->error){
 			$ret["error"] = "SQL error:" . $this->sqlObj->error;
-			$this->UnlockTables();
-			return $ret;
+			//$this->UnlockTables();
+			//return $ret;
 		}else{
 			$ret["ret"] = 1;
-			//return $ret;
 		}
 		
 		$this->UnlockTables();
 		return $ret;
 	}
-	private function CheckTypeName(){
+	private function InsertDrawing($s_para){
+		// insert drawing including the first revision of it
+		$ret = array();
+		$ret["rowResult"] = NULL;
+		$ret["ret"] = 0;
 		
+		// acquire lock
+		$sqlQuery = "Lock Tables `Drawing` Write, `DrawingRevision` Write, `FileType` Write";
+		$result = $this->sqlObj->query($sqlQuery);
+		
+		if ($this->sqlObj->error){
+			$ret["error"] = "SQL error:" . $this->sqlObj->error;
+			return $ret;
+		}
+		
+		// Insert Drawing
+		$sqlQuery = sprintf(
+			"Insert Into `Drawing` (`DrawingNo`, `Description`) Values ('%s', '%s')",
+			$s_para["drawingNo"], $s_para["description"]
+		);
+		$result = $this->sqlObj->query($sqlQuery);
+		
+		$drawingNo = NULL;
+		if ($this->sqlObj->error){
+			$ret["error"] = "SQL error:" . $this->sqlObj->error;
+			$this->UnlockTables();
+			return $ret;
+		}
+		
+		return $this->_InsertDrawingRevision($s_para);
+	}
+	public function UpdateRevision($s_para){
+		$ret = array();
+		$ret["rowResult"] = NULL;
+		$ret["ret"] = 0;
+		
+		// acquire lock
+		$sqlQuery = "Lock Tables `Drawing` Read, `DrawingRevision` Write, `FileType` Write";
+		$result = $this->sqlObj->query($sqlQuery);
+		
+		if ($this->sqlObj->error){
+			$ret["error"] = "SQL error:" . $this->sqlObj->error;
+			return $ret;
+		}
+		
+		// check DrawingNo 's reference
+		$sqlQuery = sprintf(
+			"Select `DrawingNo` From `Drawing` where `DrawingNo` = '%s'" ,
+			$s_para["drawingNo"]
+		);
+		$result = $this->sqlObj->query($sqlQuery);
+		
+		$drawingNo = NULL;
+		if ($this->sqlObj->error){
+			$ret["error"] = "SQL error:" . $this->sqlObj->error;
+			$this->UnlockTables();
+			return $ret;
+		}else{
+			$row = $result->fetch_assoc();
+			if ( !$row ){ // no record
+				$ret["error"] = "DrawingNo is invalid.\nPlease create a drawing with DrawingNo".$s_para["drawingNo"];
+				$this->UnlockTables();
+				return $ret;
+			}
+		}
+		
+		// update operation
+		$sqlQuery = sprintf( 
+			"Update `Revision`
+			Set `DrawingNo` = '%s', `RevisionNo` = '%s', `Date` = '%s', 
+			`FileLocation` = %s, `FileType` = %d, `WorkOrder` = %s,	
+			`FollowUp` = %s",
+			$s_para["drawingNo"], $s_para["revisionNo"], $s_para["date"],
+			$fileLocation, $fileType, $workOrder, $followUp
+		);
 	}
 	private function UnlockTables(){
 		$sqlQuery = "Unlock Tables";
 		$result = $this->sqlObj->query($sqlQuery);
 		return;
+	}
+	private function FormatEmptyStringValue($var){
+		$sqlVar = NULL;
+		if ( !empty($var) ){
+			$sqlVar = "'".$var."'"; // add a quote for sql
+		}else{
+			$sqlVar = "NULL"; // add a NULL value to sql
+		}
+		return $sqlVar;
 	}
 }
 ?>
