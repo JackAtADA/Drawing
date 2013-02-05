@@ -262,10 +262,10 @@
 					<td>
 						<span class="fileinput-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary">
 							<span class="ui-button-text">Add files...</span>
-							<input id="fileupload" type="file" name="files[]" data-url="Controller/Uploads/">
+							<input id="fileupload" type="file" name="files[]" data-url="Controller/Uploads/" />
 						</span>
 					</td>
-					<td><label id="fileNameNew"></label></td>
+					<td><input type="text" id="fileNameNew" value="" disabled class="text ui-widget-content ui-corner-all ui-state-disabled" size="30" maxlength="254"/></td>
 				</tr>
 				<tr>
 					<td colspan="2"><div id="progress" class="bar" style="width: 0%;"></div></td>

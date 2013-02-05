@@ -171,6 +171,8 @@ class CDBQuery{
 		$ret["ret"] = 0;
 		
 		// check typeName 's reference
+		// type name can't be detect by extension of upload file 
+		// because some old files are missing soft copy (that is no upload file).
 		$sqlQuery = sprintf(
 			"Select `TypeID` From `FileType` where `TypeName` like '%s'" ,
 			$s_para["typeName"]
@@ -182,27 +184,31 @@ class CDBQuery{
 			$ret["error"] = "SQL error:" . $this->sqlObj->error;
 			$this->UnlockTables();
 			return $ret;
-		}else{
-			$row = $result->fetch_assoc();
-			if ($row){
-				$typeID = $row["TypeID"];
-			}else { // no record
-				$sqlQuery = sprintf(
-					"Insert Into `FileType` (`TypeName`, `DefaultApplication`) Values ('%s', NULL)",
-					$s_para["typeName"]
-				);
-				$result = $this->sqlObj->query($sqlQuery);
-				if ($this->sqlObj->error){
-					$ret["error"] = "SQL error:" . $this->sqlObj->error;
-					$this->UnlockTables();
-					return $ret;
-				}else{
-					$typeID = $this->sqlObj->insert_id;
-				}
+		}
+		
+		$row = $result->fetch_assoc();
+		if ($row){
+			$typeID = $row["TypeID"];
+		}else { // no record
+			// because of changing implementation strategy. it will ask user to download the file
+			// instead of asking user to start the default application.
+			$sqlQuery = sprintf(
+				"Insert Into `FileType` (`TypeName`, `DefaultApplication`) Values ('%s', NULL)",
+				$s_para["typeName"]
+			);
+			$result = $this->sqlObj->query($sqlQuery);
+			if ($this->sqlObj->error){
+				$ret["error"] = "SQL error:" . $this->sqlObj->error;
+				$this->UnlockTables();
+				return $ret;
+			}else{
+				$typeID = $this->sqlObj->insert_id;
 			}
 		}
 		
-		$fileLocation = $this->FormatEmptyStringValue($s_para["fileLocation"]);
+		
+		// insert record;
+		$fileLocation = $s_para["fileLocation"];
 		$workOrder = $this->FormatEmptyStringValue($s_para["workOrder"]);
 		$followUp = $this->FormatEmptyStringValue($s_para["followUp"]);
 		
@@ -211,22 +217,47 @@ class CDBQuery{
 				`DrawingNo`, `RevisionNo`, `Date`, `FileType`, 
 				`FileLocation`, `WorkOrder`, `FollowUp`
 			) VALUES (
-				'%s', '%s', '%s', '%d', %s, %s, %s
+				'%s', '%s', '%s', '%d', NULL, %s, %s
 			)",
 			$s_para["drawingNo"], $s_para["revisionNo"], $s_para["date"],
-			$typeID, $fileLocation, $workOrder, $followUp
+			$typeID, $workOrder, $followUp
 		);
 		
 		$result = $this->sqlObj->query($sqlQuery);
 		
 		if ($this->sqlObj->error){
 			$ret["error"] = "SQL error:" . $this->sqlObj->error;
-			//$this->UnlockTables();
-			//return $ret;
+			$this->UnlockTables();
+			return $ret;
 		}else{
-			$ret["ret"] = 1;
+			$recordID = $this->sqlObj->insert_id;
 		}
 		
+		// deal with the file location
+		if ($fileLocation != "NULL"){
+			$newLocation = $this->MoveFileToServerInside($fileLocation, $recordID);
+			
+			if ($newLocation == NULL){
+				$ret["error"] = "Move file fail";
+				$this->UnlockTables();
+				return $ret;
+			}
+			// update location in table
+			$sqlQuery = sprintf(
+				"Update `DrawingRevision` Set `Filelocation`='%s'
+				Where `RecordID`='%s'",
+				$newLocation, $recordID
+			);
+			
+			$result = $this->sqlObj->query($sqlQuery);
+			
+			if ($this->sqlObj->error){
+				$ret["error"] = "SQL error:" . $this->sqlObj->error;
+				$this->UnlockTables();
+				return $ret;
+			}
+		}
+		$ret["ret"] = 1;
 		$this->UnlockTables();
 		return $ret;
 	}
@@ -252,7 +283,7 @@ class CDBQuery{
 		);
 		$result = $this->sqlObj->query($sqlQuery);
 		
-		$drawingNo = NULL;
+		//$drawingNo = NULL; ??
 		if ($this->sqlObj->error){
 			$ret["error"] = "SQL error:" . $this->sqlObj->error;
 			$this->UnlockTables();
@@ -319,6 +350,63 @@ class CDBQuery{
 			$sqlVar = "NULL"; // add a NULL value to sql
 		}
 		return $sqlVar;
+	}
+	private function MoveFileToServerInside($targetFile, $recordID){
+		// return the string of "safe" file path after moving the file.
+		// if any error occurs, return NULL
+		
+		$extension = strrchr($targetFile, ".");
+		global $gFilePool;
+		$newPath = $gFilePool . "/" . $recordID . $extension;
+		
+		$ret = rename($targetFile, $newPath);
+		if ($ret == true){
+			return addslashes($newPath);
+		}else{
+			return NULL;
+		}
+		/*
+		the implementation of function COPY
+		$fpi = fopen($targetFile, "r");
+		
+		if ($fpi == NULL){
+			return NULL;
+		}
+		$len = filesize($targetFile);
+		$content = fread($fpi, $len);
+		
+		if ($content == FALSE){
+			echo "<br>read error<br>";
+			fprintf("%d %s<br>", $len, $content);
+			fclose($fpi);
+			return NULL;
+		}
+		
+		$pattern = "/\.([^\.]*)/";
+		$ret = preg_match( $pattern, basename($targetFile), $matches); // have a bug when multi-dot appear
+		$extension = NULL;
+		if ($ret > 0){
+			$extension = $matches[0];
+		}
+		global $gFilePool;
+		$newPath = $gFilePool . "/" . $recordID . $extension;
+		$fpo = fopen($newPath, "w" );
+		
+		if ($fpo == NULL){
+			fclose($fpi);
+			return NULL;
+		}
+		$wLen = fwrite($fpo, $content, $len);
+		
+		fclose($fpi);
+		fclose($fpo);
+		if ($wLen != $len){
+			return NULL;
+		}else {
+			unlink($targetFile);
+			return $newPath;
+		}
+		*/
 	}
 }
 ?>

@@ -1,8 +1,4 @@
-function SubmitInsertForm(fileName){
-	//e.preventDefault();
-	
-	DebugOutput(fileName);
-	/*
+function SubmitInsertForm(){
 	var insertType = $('input[name="insertType"]:checked').val();
 	
 	updateField = {
@@ -11,17 +7,23 @@ function SubmitInsertForm(fileName){
 		"description": $( "#descriptionNew" ).val(),
 		"revisionNo": $("#revisionNoNew").val(),
 		"date": $( "#dateNew").val(),
-		"fileLocation": $( "#fileLocationNew" ).val(),
+		//"fileLocation": $( "#fileLocationNew" ).val(),
 		"typeName": $("#typeNameNew").val(),
 		"workOrder": $("#workOrderNew").val(),
 		"followUp": $("#followUpNew").val(),
+		"fileName" : $("#fileNameNew").val(),
 		"op" : "insert"
 	};
 	
+	$.each(updateField, function (index, value){
+		DebugOutput(index + ":" + value);
+	});
 	$.get("Controller/updateHandler.php", updateField, function(data){
-		//$.each(data, function (index, value){
-			//DebugOutput(index + ":" + value);
-		//});
+		/*
+		$.each(data, function (index, value){
+			DebugOutput(index + ":" + value);
+		});
+		*/
 		if (data.ret == 1){
 			alert("insert successful");
 			var IDs = [ 
@@ -29,12 +31,17 @@ function SubmitInsertForm(fileName){
 				"#descriptionNew",
 				"#revisionNoNew",
 				"#dateNew",
-				"#fileLocationNew",
+				//"#fileLocationNew",
 				"#typeNameNew",
 				"#workOrderNew",
-				"#followUpNew"
+				"#followUpNew",
+				"#fileNameNew",
 			];
 			ClearValues(IDs);
+			$('#progress').css(
+				'width',
+				'0%'
+			);
 		}else{
 			alert(data.error);
 			if (data.error == "Permission deny, user has not login"){
@@ -42,7 +49,6 @@ function SubmitInsertForm(fileName){
 			}
 		}
 	}, "json");
-	*/
 }
 
 function ClearValues( IDs ) {
@@ -78,9 +84,9 @@ function InitInsertTab(){
 		dataType: 'json',
 		singleFileUploads: false, 
 		add: function (e, data) {
-			DebugOutput(data);
+			//DebugOutput(data);
 			$("#submitNew").unbind('click');
-			$( "#fileNameNew" ).html(data.files[0].name);
+			$( "#fileNameNew" ).val(data.files[0].name);
 			$( "#submitNew" ).click(function (event){
 				event.preventDefault();
 				data.submit();
@@ -91,7 +97,7 @@ function InitInsertTab(){
 		},
 		done: function (e, data) {
 			DebugOutput("done");
-			SubmitInsertForm(data.result.files[0].name);
+			SubmitInsertForm();
 			/*
 			$.each(data.result.files, function (index, file) {
 				
