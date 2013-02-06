@@ -234,7 +234,7 @@ class CDBQuery{
 		}
 		
 		// deal with the file location
-		if ($fileLocation != "NULL"){
+		if ($fileLocation != NULL){
 			$newLocation = $this->MoveFileToServerInside($fileLocation, $recordID);
 			
 			if ($newLocation == NULL){

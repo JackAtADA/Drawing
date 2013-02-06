@@ -242,10 +242,12 @@
 					<td><label for="dateNew">Date</label></td>
 					<td><input type="text" name="dateNew" id="dateNew" value="" class="text ui-widget-content ui-corner-all" size="30"/></td>
 				</tr>
+				<!--
 				<tr>
 					<td><label for="fileLocationNew">FileLocation</label></td>
 					<td><input type="text" name="fileLocationNew" id="fileLocationNew" value="" class="text ui-widget-content ui-corner-all" size="30" maxlength="1023"/></td>
 				</tr>
+				-->
 				<tr>
 					<td><label for="typeNameNew">FileType</label></td>
 					<td><input type="text" name="typeNameNew" id="typeNameNew" value="" class="text ui-widget-content ui-corner-all" size="30" maxlength="254"/></td>

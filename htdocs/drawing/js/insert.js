@@ -77,7 +77,13 @@ function InitInsertTab(){
 	$( "#radio2" ).click(function(){
 		ChangeStateOfInsertForm(false);
 	});
-	$( "#submitNew" ).button();
+	
+	$( "#submitNew" ).button()
+		.click(function (event){
+			event.preventDefault();
+			SubmitInsertForm();
+		});
+	
 	$( "#dateNew" ).datepicker({ dateFormat: "yy-mm-dd" });
 		
 	$('#fileupload').fileupload({
@@ -98,12 +104,6 @@ function InitInsertTab(){
 		done: function (e, data) {
 			DebugOutput("done");
 			SubmitInsertForm();
-			/*
-			$.each(data.result.files, function (index, file) {
-				
-				$('<p/>').text(file.name).appendTo(document.body);
-			});
-			*/
 		},
 		progressall: function (e, data) {
 			var progress = parseInt(data.loaded / data.total * 100, 10);

@@ -32,6 +32,8 @@ if ( isset( $_GET["op"] ) && ($_GET["op"] == "update") ){
 	//$s_para["fileType"] = "None";
 	if ( isset($_GET["fileName"]) && !empty($_GET["fileName"]) ){
 		global $gUploadPath;
+		//$s_para["fileLocation"] = $gUploadPath . "/" . addslashes($_GET["fileName"]);
+		// cannot apply addslashes to $_GET("fileName"); because it is not for sql directly.
 		$s_para["fileLocation"] = $gUploadPath . "/" . $_GET["fileName"];
 	}
 	$dbQuery = new CDBQuery($gSqlObj);
