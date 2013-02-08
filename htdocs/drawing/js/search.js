@@ -6,7 +6,9 @@ function SearchDetailRecordInfo( recordID ){
 	$.get("Controller/searchHandler.php", searchField, function(data){
 		if ( data.ret == "1"){ // success
 			$( "#recordDialog" ).dialog( "open" );
+			InitRecordDialog();
 			if ( typeof data.rowResult[0] == "undefined"){
+				alert( "no record" );
 				return;
 			}
 			var record = data.rowResult[0];
@@ -15,7 +17,13 @@ function SearchDetailRecordInfo( recordID ){
 			$( "#referenceDrawingNoResult" ).val( record["DrawingNo"] );
 			$( "#revisionNoResult" ).val( record["RevisionNo"] ); 
 			$( "#typeNameResult" ).val( record["TypeName"] );
-			$( "#fileLocationResult" ).val( record["FileLocation"] );
+			if ( record["FileLocation"] != null){
+				$( "#fileLocationResult" ).attr( "href", "Controller/downleadFile.php?file=" + record["FileLocation"]);
+			}else{
+				$( "#fileLocationResult" ).hide();
+			}
+			//$( "#fileLocationResult" ).val( record["FileLocation"] );
+			
 			$( "#dateResult" ).val( record["Date"] );
 			$( "#workOrderResult" ).val( record["WorkOrder"] );
 			$( "#followUpResult" ).val( record["FollowUp"] );

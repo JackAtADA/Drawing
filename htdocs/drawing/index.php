@@ -13,6 +13,7 @@
 	<script src="js/main.js"></script>
 	<script src="js/insert.js"></script>
 	<script src="js/search.js"></script>
+	<script src="js/update.js"></script>
 	<script src="js/vendor/jquery.ui.widget.js"></script>
 	<script src="js/jquery.iframe-transport.js"></script>
 	<script src="js/jquery.fileupload.js"></script>
@@ -76,14 +77,6 @@
 			//height: 350,
 			width: 500,
 			modal: true,
-			buttons: {
-				/*
-				"Update(not ready)": function() { 
-				},
-				"Cancel": function() {
-					$( this ).dialog( "close" );
-				}*/
-			},
 			close: function() {
 				
 			}
@@ -129,16 +122,6 @@
     </form>
 </div>
 
-<!--
-<div id="testDIV">
-	<form>
-	<fieldset>
-	<input type="text" name="test" id="test" value="testString" class="text ui-widget-content ui-corner-all" />
-	</fieldset>
-	</form>
-</div>
--->
-
 <div id="recordDialog" title="Revision Record">
     <form>
     <fieldset>
@@ -165,14 +148,12 @@
 			<td><label for="dateResult">Date</label></td>
         	<td><input type="text" name="dateResult" id="dateResult" value="" class="text ui-widget-content ui-corner-all" /></td>
 		</tr>
+		<!--
 		<tr>
 			<td><label for="fileLocationResult">FileLocation</label></td>
         	<td><input type="text" name="fileLocationResult" id="fileLocationResult" value="" class="text ui-widget-content ui-corner-all" /></td>
 		</tr>
-		<tr>
-			<td><label for="typeNameResult">FileType</label></td>
-			<td><input type="text" name="typeNameResult" id="typeNameResult" value="" class="text ui-widget-content ui-corner-all" /></td>
-		</tr>
+		!-->
 		<tr>
 			<td><label for="workOrderResult">WorkOrder</label></td>
 			<td><input type="text" name="workOrderResult" id="workOrderResult" value="" class="text ui-widget-content ui-corner-all" /></td>
@@ -180,6 +161,27 @@
 		<tr>
 			<td><label for="followUpResult">FollowUp</label></td>
 			<td><input type="text" name="followUpResult" id="followUpResult" value="" class="text ui-widget-content ui-corner-all" /></td>
+		</tr>
+		<tr>
+			<td><label for="typeNameResult">FileType</label></td>
+			<td><input type="text" name="typeNameResult" id="typeNameResult" value="" class="text ui-widget-content ui-corner-all" /></td>
+		</tr>
+		<tr>
+			<td><label for="fileLocationResult">File</label></td>
+        	<td><a href="" id="fileLocationResult">link</a></td>
+		</tr>
+		<tr>
+			<td>
+				<span class="fileinput-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary">
+					<span class="ui-button-text" style="padding:.4em 1em;">Replace file</span>
+					<!-- <span class="ui-button-text-only ui-button-text">Replace file</span> -->
+					<input id="fileUploadReplace" type="file" name="files[]" data-url="Controller/Uploads/" />
+				</span>
+			</td>
+			<td><input type="text" id="fileNameReplace" value="" disabled class="text ui-widget-content ui-corner-all ui-state-disabled" size="30" maxlength="254"/></td>
+		</tr>
+		<tr>
+			<td colspan="2"><div id="progressReplace" class="bar" style="width: 0%;"></div></td>
 		</tr>
 		<tr><td colspan="2" align="right"><button id="updateRevisionButton">Update Revision(not ready)</button></td></tr>
 		</table>
@@ -242,6 +244,14 @@
 					<td><label for="dateNew">Date</label></td>
 					<td><input type="text" name="dateNew" id="dateNew" value="" class="text ui-widget-content ui-corner-all" size="30"/></td>
 				</tr>
+				<tr>
+					<td><label for="workOrderNew">WorkOrder</label></td>
+					<td><input type="text" name="workOrderNew" id="workOrderNew" value="" class="text ui-widget-content ui-corner-all" size="30" maxlength="254"/></td>
+				</tr>
+				<tr>
+					<td><label for="followUpNew">FollowUp</label></td>
+					<td><input type="text" name="followUpNew" id="followUpNew" value="" class="text ui-widget-content ui-corner-all" size="30" maxlength="254"/></td>
+				</tr>
 				<!--
 				<tr>
 					<td><label for="fileLocationNew">FileLocation</label></td>
@@ -251,14 +261,6 @@
 				<tr>
 					<td><label for="typeNameNew">FileType</label></td>
 					<td><input type="text" name="typeNameNew" id="typeNameNew" value="" class="text ui-widget-content ui-corner-all" size="30" maxlength="254"/></td>
-				</tr>
-				<tr>
-					<td><label for="workOrderNew">WorkOrder</label></td>
-					<td><input type="text" name="workOrderNew" id="workOrderNew" value="" class="text ui-widget-content ui-corner-all" size="30" maxlength="254"/></td>
-				</tr>
-				<tr>
-					<td><label for="followUpNew">FollowUp</label></td>
-					<td><input type="text" name="followUpNew" id="followUpNew" value="" class="text ui-widget-content ui-corner-all" size="30" maxlength="254"/></td>
 				</tr>
 				<tr>
 					<td>
