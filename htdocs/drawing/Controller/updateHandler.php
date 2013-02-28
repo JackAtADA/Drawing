@@ -18,7 +18,25 @@ $ret = array();
 $ret["ret"] = 0;
 
 if ( isset( $_GET["op"] ) && ($_GET["op"] == "update") ){
+	// detect the field of the "fileReplaceOption" to decide how to treat the original file of the record.
+	$indexs = array("updateType", "drawingNo", "revisionNo", "date", "workOrder", "followUp", "typeName", "fileReplaceOption");
+	$s_para = array();
 	
+	foreach ($indexs as $index){
+		$s_para[$index] = addslashes($_GET[$index]);
+	}
+	$s_para["fileLocation"] = NULL;
+	if ( isset($_GET["fileName"]) && !empty($_GET["fileName"]) ){
+		global $gUploadPath;
+		// cannot apply addslashes to $_GET("fileName"); because it is not for sql directly.
+		$s_para["fileLocation"] = $gUploadPath . "/" . $_GET["fileName"];
+	}
+	$dbQuery = new CDBQuery($gSqlObj);
+	//$ret = $dbQuery->Insert($s_para);
+	$ret = array();
+	$ret["error"] = "test";
+	$ret["ret"] = 0;
+	echo json_encode($ret);
 }else if ( isset( $_GET["op"] ) && ($_GET["op"] == "insert") ){
 	// convert the input message into safe format.
 	$indexs = array("insertType", "drawingNo", "description", "revisionNo", "date", "typeName", "workOrder", "followUp", "fileName");

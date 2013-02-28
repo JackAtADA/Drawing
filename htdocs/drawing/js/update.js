@@ -2,37 +2,87 @@ function InitRecordDialog(){
 	$( "#updateRevisionButton" ).button()
 		.click(function (event){
 			event.preventDefault();
-			//SubmitInsertForm();
+			$( "#fileReplaceOptionSelected" ).val("keepOriginalFile");
+			SubmitUpdateForm();
 		});
 	
 	$( "#dateResult" ).datepicker({ dateFormat: "yy-mm-dd" });
+	$( "#fileReplaceOption" ).buttonset();
 	
-	$('#fileUploadReplace').fileupload({
-		dataType: 'json',
-		singleFileUploads: false, 
-		add: function (e, data) {
-			//DebugOutput(data);
-			$("#updateRevisionButton").unbind('click');
-			$( "#fileNameReplace" ).val(data.files[0].name);
-			$( "#updateRevisionButton" ).click(function (event){
-				event.preventDefault();
-				data.submit();
-			});
-			$('#progressReplace').css(
-				'width', '0%'
-			);
-		},
-		done: function (e, data) {
-			DebugOutput("done");
-			//SubmitInsertForm();
-		},
-		progressall: function (e, data) {
-			var progress = parseInt(data.loaded / data.total * 100, 10);
-			DebugOutput("progress:" + progress);
-			$('#progressReplace').css(
-				'width',
-				progress + '%'
-			);
-		}
+	$( "#fileReplaceOption1" ).click( function (){
+		ResetUpdateRevisionButton();
+		$( "#fileReplaceOptionSelected" ).val("keepOriginalFile");
 	});
+	$( "#fileReplaceOption2" ).click( function (){
+		ResetUpdateRevisionButton();
+		$( "#fileReplaceOptionSelected" ).val("removeOldFile");
+	});
+	
+	$('#fileReplaceScope').hide();
+	$( "#fileReplaceOption3" ).click(function (){
+		$('#fileReplaceScope').show();
+		$('#fileUploadReplace').fileupload({
+			dataType: 'json',
+			singleFileUploads: false, 
+			add: function (e, data) {
+				//DebugOutput(data);
+				$("#updateRevisionButton").unbind('click');
+				$( "#fileNameReplace" ).val(data.files[0].name);
+				$( "#updateRevisionButton" ).click(function (event){
+					event.preventDefault();
+					data.submit();
+				});
+				$('#progressReplace').css(
+					'width', '0%'
+				);
+			},
+			done: function (e, data) {
+				DebugOutput("file sent done");
+				$( "#fileReplaceOptionSelected" ).val("replaceWithFile");
+				SubmitUpdateForm();
+			},
+			progressall: function (e, data) {
+				var progress = parseInt(data.loaded / data.total * 100, 10);
+				DebugOutput("progress:" + progress);
+				$('#progressReplace').css(
+					'width',
+					progress + '%'
+				);
+			}
+		});
+	});
+}
+
+function ResetUpdateRevisionButton(){
+	// Init/reset - unbind and re-bind
+	$("#fileReplaceScope").hide();
+	$("#updateRevisionButton").unbind('click');
+	$( "#updateRevisionButton" ).click(function (event){
+		event.preventDefault();
+		SubmitUpdateForm();
+	});
+	// Reset the file name to empty string
+	$( "#fileNameReplace" ).val("");
+}
+
+function SubmitUpdateForm(){
+	var updateType = "drawingRevision";
+	var drawingNo = "";
+	updateField = {
+		"updateType": updateType,
+		"drawingNo": $( "#referenceDrawingNoResult" ).val(), 
+		"revisionNo": $( "#revisionNoResult" ).val(),
+		"date": $( "#dateResult").val(),
+		"workOrder": $("#workOrderResult").val(),
+		"followUp": $("#followUpResult").val(),
+		"typeName": $("#typeNameResult").val(),
+		"fileName" : $("#fileNameReplace").val(),
+		"fileReplaceOption" : $( "#fileReplaceOptionSelected" ).val(),
+		"op" : "update",
+	};
+	$.get("Controller/updateHandler.php", updateField, function(data){
+		$.each(data, function(index, value){
+			DebugOutput(index + ":" + value);
+		});
+	}, "json");
 }

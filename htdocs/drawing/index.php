@@ -3,7 +3,7 @@
 <html lang="us">
 <head>
 	<meta charset="utf-8">
-	<title>Drawing DateBase</title>
+	<title>Drawing Database</title>
 	<link href="css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet" />
 	<link href="css/main.css" rel="stylesheet" />
 	<link href="css/jquery.fileupload-ui.css" rel="stylesheet" />
@@ -171,10 +171,18 @@
         	<td><a href="" id="fileLocationResult">link</a></td>
 		</tr>
 		<tr>
+			<td colspan="2">
+				<div id="fileReplaceOption">
+					<input type="radio" id="fileReplaceOption1" name="radio" checked="checked"/><label for="fileReplaceOption1" class="small-button">keep original file</label>
+					<input type="radio" id="fileReplaceOption2" name="radio" /><label for="fileReplaceOption2" class="small-button">remove old file</label>
+					<input type="radio" id="fileReplaceOption3" name="radio" /><label for="fileReplaceOption3" class="small-button">replace file with</label>
+				</div>
+			</td>
+		</tr>
+		<tr id="fileReplaceScope">
 			<td>
 				<span class="fileinput-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary">
-					<span class="ui-button-text" style="padding:.4em 1em;">Replace file</span>
-					<!-- <span class="ui-button-text-only ui-button-text">Replace file</span> -->
+					<span class="ui-button-text small-button" style="padding:.4em 1em;">Replace file</span>
 					<input id="fileUploadReplace" type="file" name="files[]" data-url="Controller/Uploads/" />
 				</span>
 			</td>
@@ -184,6 +192,8 @@
 			<td colspan="2"><div id="progressReplace" class="bar" style="width: 0%;"></div></td>
 		</tr>
 		<tr><td colspan="2" align="right"><button id="updateRevisionButton">Update Revision(not ready)</button></td></tr>
+		<input id="fileReplaceOptionSelected" type="hidden" value=""/>
+		<input id="recordIDResult" type="hidden" value=""/>
 		</table>
     </fieldset>
     </form>

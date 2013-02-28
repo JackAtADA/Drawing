@@ -19,9 +19,11 @@ function SearchDetailRecordInfo( recordID ){
 			$( "#typeNameResult" ).val( record["TypeName"] );
 			if ( record["FileLocation"] != null){
 				$( "#fileLocationResult" ).attr( "href", "Controller/downleadFile.php?file=" + record["FileLocation"]);
+				$( "#fileLocationResult" ).show();
 			}else{
 				$( "#fileLocationResult" ).hide();
 			}
+			$("#recordIDResult").val( recordID );
 			//$( "#fileLocationResult" ).val( record["FileLocation"] );
 			
 			$( "#dateResult" ).val( record["Date"] );

@@ -4,3 +4,7 @@
 	height: 18px;
 	background: green;
 }
+
+.small-button {
+	font-size: .8em !important;
+}
