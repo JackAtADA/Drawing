@@ -23,7 +23,7 @@
 	function DialogSubmit(userName, password) {
 		LoginRequest(userName, password, 
 			function(){$("#dialog-form").dialog("close")},
-			UpdateTips
+			UpdateLoginTips
 		);
 	}
 	function InitResultButton( recordID ){
@@ -123,6 +123,7 @@
 </div>
 
 <div id="recordDialog" title="Revision Record">
+	<p id="recordDialogTips"></p>
     <form>
     <fieldset>
 		<table class="ui-widget">
@@ -191,7 +192,7 @@
 		<tr>
 			<td colspan="2"><div id="progressReplace" class="bar" style="width: 0%;"></div></td>
 		</tr>
-		<tr><td colspan="2" align="right"><button id="updateRevisionButton">Update Revision(not ready)</button></td></tr>
+		<tr><td colspan="2" align="right"><button id="updateRevisionButton">Update Revision</button></td></tr>
 		<input id="fileReplaceOptionSelected" type="hidden" value=""/>
 		<input id="recordIDResult" type="hidden" value=""/>
 		</table>
@@ -203,7 +204,7 @@
     <ul>
         <li><a href="#tabs-1">Search and Modify</a></li>
         <li><a href="#tabs-2">Insert New Record</a></li>
-        <li><a href="#tabs-3">Temp</a></li>
+        <li><a href="#tabs-3">SQL</a></li>
     </ul>
     <div id="tabs-1">
         <p>Search Form</p>
@@ -295,7 +296,7 @@
 		</div>
     </div>
     <div id="tabs-3">
-        <p>Temp page.</p>
+        <p>Let Advance user enter SQL directly. (Not ready)</p>
     </div>
 </div>
 

@@ -1,16 +1,16 @@
 function LoginRequest(userName, password, successCallBack, failCallBack){
 	//allFields = $( [] ).add( userName ).add( password );
-	var tipsObj = $( "p#loginTips" );
+	//var tipsObj = $( "p#loginTips" );
 	
 	$.get(
 		"Controller/loginHandler.php",
 		{ "op": "login", "userName": userName, "password":password },
 		function(data){
-			DebugOutput(data);
+			//DebugOutput(data);
 			if (data.ret == 1){
 				successCallBack();
 			}else{
-				failCallBack(data);
+				UpdateLoginTips( data.error );
 			}
 		},
 		"json"
@@ -57,10 +57,10 @@ function RedirectBack(){
 	}
 }
 
-function UpdateTips( data ) {
+function UpdateLoginTips( msg ) {
 	var tips = $( "p#loginTips" );
 	tips
-		.text( data.error )
+		.text( msg )
 		.addClass( "ui-state-highlight" );
 	setTimeout(function() {
 		tips.removeClass( "ui-state-highlight", 1500 );

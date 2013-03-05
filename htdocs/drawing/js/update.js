@@ -1,8 +1,11 @@
 function InitRecordDialog(){
+	$( "#fileReplaceOptionSelected" ).val("keepOriginalFile");
+	$( "#fileReplaceOption1").attr("checked","checked");
+	//$( "#fileReplaceOption2").removeAttr("checked");
+	//$( "#fileReplaceOption3").removeAttr("checked");
 	$( "#updateRevisionButton" ).button()
 		.click(function (event){
 			event.preventDefault();
-			$( "#fileReplaceOptionSelected" ).val("keepOriginalFile");
 			SubmitUpdateForm();
 		});
 	
@@ -20,6 +23,7 @@ function InitRecordDialog(){
 	
 	$('#fileReplaceScope').hide();
 	$( "#fileReplaceOption3" ).click(function (){
+		$( "#fileReplaceOptionSelected" ).val("replaceWithFile");
 		$('#fileReplaceScope').show();
 		$('#fileUploadReplace').fileupload({
 			dataType: 'json',
@@ -78,11 +82,19 @@ function SubmitUpdateForm(){
 		"typeName": $("#typeNameResult").val(),
 		"fileName" : $("#fileNameReplace").val(),
 		"fileReplaceOption" : $( "#fileReplaceOptionSelected" ).val(),
+		"recordID" : $("#recordIDResult").val(),
 		"op" : "update",
 	};
 	$.get("Controller/updateHandler.php", updateField, function(data){
 		$.each(data, function(index, value){
 			DebugOutput(index + ":" + value);
 		});
+		if (data.ret == 1){
+			// tips with update success
+			UpdateTips("#recordDialogTips", "Update Successful");
+		}else {
+			// tips with error message
+			UpdateTips("#recordDialogTips", data.error);
+		}
 	}, "json");
 }
