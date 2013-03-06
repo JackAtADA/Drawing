@@ -17,7 +17,23 @@ require_once( $gModelPath . "/DBQuery.php" );
 $ret = array();
 $ret["ret"] = 0;
 
-if ( isset( $_GET["op"] ) && ($_GET["op"] == "update") ){
+if ( isset( $_GET["op"] ) && $_GET["op"] == "update"
+	&& isset( $_GET["updateType"] ) && $_GET["updateType"] == "drawing"){
+	// For update drawing
+	$indexs = array("updateType", "updateDrawingNoTo", "originalDrawingNo", "description");
+	$s_para = array();
+	
+	foreach ($indexs as $index){
+		$s_para[$index] = addslashes($_GET[$index]);
+	}
+	
+	$dbQuery = new CDBQuery($gSqlObj);
+	$ret = $dbQuery->UpdateDrawing($s_para);
+	echo json_encode($ret);
+	
+}else if ( isset( $_GET["op"] ) && $_GET["op"] == "update"
+	&& isset( $_GET["updateType"] ) && $_GET["updateType"] == "revision"){
+	// For update revision
 	// detect the field of the "fileReplaceOption" to decide how to treat the original file of the record.
 	$indexs = array("updateType", "drawingNo", "revisionNo", "date", "workOrder", "followUp", "typeName", "fileReplaceOption", "recordID");
 	$s_para = array();

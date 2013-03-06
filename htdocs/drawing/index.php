@@ -129,14 +129,20 @@
 		<table class="ui-widget">
 		<tr>
 			<td><label for="drawingNoResult">Drawing No.</label></td>
-			<td><input type="text" name="drawingNoResult" id="drawingNoResult" disabled class="text ui-widget-content ui-corner-all ui-state-disabled"/></td>
+			<td><input type="text" name="drawingNoResult" id="drawingNoResult" class="text ui-widget-content ui-corner-all"/></td>
 		</tr>
         <tr>
 			<td><label for="descriptionResult">Description</label></td>
-			<td><textarea name="descriptionResult" id="descriptionResult" rows="5" cols="30" maxlength="1023" class="text ui-widget-content ui-corner-all ui-state-disabled" disabled></textarea></td>
+			<td><textarea name="descriptionResult" id="descriptionResult" rows="5" cols="30" maxlength="1023" class="text ui-widget-content ui-corner-all"></textarea></td>
 		</tr>
-		<tr><td colspan="2"  align="right"><button id="modifyDrawingRecordButton">Modify the Drawing Record(not ready)</button></td></tr>
-		<tr><td colspan="2"><hr/></td></tr>
+		<tr><td colspan="2"  align="right"><button id="updateDrawingButton">Modify Drawing Record(not ready)</button></td></tr>
+		</table>
+	</fieldset>
+	</form>
+	<form>
+    <fieldset>
+		<table class="ui-widget">
+		<!--  <tr><td colspan="2"><hr/></td></tr>  -->
 		<tr>
 			<td><label for="referenceDrawingNoResult">Reference to DrawingNo</label></td>
 			<td><input type="text" name="referenceDrawingNoResult" id="referenceDrawingNoResult" class="text ui-widget-content ui-corner-all" /></td>
@@ -192,7 +198,8 @@
 		<tr>
 			<td colspan="2"><div id="progressReplace" class="bar" style="width: 0%;"></div></td>
 		</tr>
-		<tr><td colspan="2" align="right"><button id="updateRevisionButton">Update Revision</button></td></tr>
+		<tr><td colspan="2" align="right"><button id="updateRevisionButton">Modify Revision Record</button></td></tr>
+		<input id="drawingNoResultOld" type="hidden" value=""/>
 		<input id="fileReplaceOptionSelected" type="hidden" value=""/>
 		<input id="recordIDResult" type="hidden" value=""/>
 		</table>

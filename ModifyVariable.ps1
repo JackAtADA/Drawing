@@ -1,0 +1,2 @@
+Get-Content "C:\xampp\Model\connect.php" | ForEach-Object { $_ -replace "$dbname = 'adadrawing';", "$dbname = 'adadrawingpublic';" } | Set-Content "C:\xampp\ModelPublic\connect.php"
+Get-Content "C:\xampp\htdocs\drawing\Controller\configure.php" | ForEach-Object { $_ -replace "$gModelPath = `"C:\\\\xampp\\\\Model`";", "$gModelPath = `"C:\\xampp\\ModelPublic`";" } | Set-Content "C:\xampp\htdocs\drawingPublic\Controller\configure.php"

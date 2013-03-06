@@ -1,13 +1,27 @@
 function InitRecordDialog(){
+	// Reset UI
+	$( "#recordDialogTips" ).text("");
+	$('#progressReplace').css('width', '0%');
+	
+	// for drawing update
+	$( "#updateDrawingButton" ).button()
+		.click(function (event){
+			event.preventDefault();
+			SubmitUpdateForm("drawing");
+		});
+
+	
+	// for revision update
 	$( "#fileReplaceOptionSelected" ).val("keepOriginalFile");
 	$( "#fileReplaceOption1").attr("checked","checked");
-	//$( "#fileReplaceOption2").removeAttr("checked");
-	//$( "#fileReplaceOption3").removeAttr("checked");
+	
+	
 	$( "#updateRevisionButton" ).button()
 		.click(function (event){
 			event.preventDefault();
-			SubmitUpdateForm();
+			SubmitUpdateForm("revision");
 		});
+	
 	
 	$( "#dateResult" ).datepicker({ dateFormat: "yy-mm-dd" });
 	$( "#fileReplaceOption" ).buttonset();
@@ -43,7 +57,7 @@ function InitRecordDialog(){
 			done: function (e, data) {
 				DebugOutput("file sent done");
 				$( "#fileReplaceOptionSelected" ).val("replaceWithFile");
-				SubmitUpdateForm();
+				SubmitUpdateForm("revision");
 			},
 			progressall: function (e, data) {
 				var progress = parseInt(data.loaded / data.total * 100, 10);
@@ -69,26 +83,31 @@ function ResetUpdateRevisionButton(){
 	$( "#fileNameReplace" ).val("");
 }
 
-function SubmitUpdateForm(){
-	var updateType = "drawingRevision";
-	var drawingNo = "";
-	updateField = {
-		"updateType": updateType,
-		"drawingNo": $( "#referenceDrawingNoResult" ).val(), 
-		"revisionNo": $( "#revisionNoResult" ).val(),
-		"date": $( "#dateResult").val(),
-		"workOrder": $("#workOrderResult").val(),
-		"followUp": $("#followUpResult").val(),
-		"typeName": $("#typeNameResult").val(),
-		"fileName" : $("#fileNameReplace").val(),
-		"fileReplaceOption" : $( "#fileReplaceOptionSelected" ).val(),
-		"recordID" : $("#recordIDResult").val(),
-		"op" : "update",
-	};
+function SubmitUpdateForm(updateType){
+	if (updateType == "drawing"){
+		updateField = {
+			"updateType": updateType,
+			"updateDrawingNoTo": $( "#drawingNoResult" ).val(), 
+			"originalDrawingNo": $( "#drawingNoResultOld" ).val(), 
+			"description" : $( "#descriptionResult" ).val(),
+			"op" : "update"
+		};
+	}else if (updateType == "revision"){
+		updateField = {
+			"updateType": updateType,
+			"drawingNo": $( "#referenceDrawingNoResult" ).val(), 
+			"revisionNo": $( "#revisionNoResult" ).val(),
+			"date": $( "#dateResult").val(),
+			"workOrder": $("#workOrderResult").val(),
+			"followUp": $("#followUpResult").val(),
+			"typeName": $("#typeNameResult").val(),
+			"fileName" : $("#fileNameReplace").val(),
+			"fileReplaceOption" : $( "#fileReplaceOptionSelected" ).val(),
+			"recordID" : $("#recordIDResult").val(),
+			"op" : "update"
+		};
+	}
 	$.get("Controller/updateHandler.php", updateField, function(data){
-		$.each(data, function(index, value){
-			DebugOutput(index + ":" + value);
-		});
 		if (data.ret == 1){
 			// tips with update success
 			UpdateTips("#recordDialogTips", "Update Successful");

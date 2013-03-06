@@ -292,6 +292,37 @@ class CDBQuery{
 		
 		return $this->_InsertDrawingRevision($s_para);
 	}
+	public function UpdateDrawing($s_para){
+		$ret = array();
+		$ret["ret"] = 0;
+		
+		// acquire lock
+		$sqlQuery = "Lock Tables `Drawing` Write";
+		$result = $this->sqlObj->query($sqlQuery);
+		
+		if ($this->sqlObj->error){
+			$ret["error"] = "SQL error:" . $this->sqlObj->error;
+			return $ret;
+		}
+		
+		// update operation
+		$sqlQuery = sprintf( 
+			"Update `Drawing`
+			Set `DrawingNo` = '%s', `Description` = '%s'
+			Where `DrawingNo` = '%s'", 
+			$s_para["updateDrawingNoTo"], $s_para["description"], $s_para["originalDrawingNo"]);
+		
+		$result = $this->sqlObj->query($sqlQuery);
+		if ($this->sqlObj->error){
+			$ret["error"] = "SQL error:" . $this->sqlObj->error;
+			$this->UnlockTables();
+			return $ret;
+		}
+		// else, it means update successful
+		$ret["ret"] = 1;
+		$this->UnlockTables();
+		return $ret;
+	}
 	public function UpdateRevision($s_para){
 		$ret = array();
 		$ret["ret"] = 0;
@@ -439,7 +470,12 @@ class CDBQuery{
 		
 		$ret = rename($targetFile, $newPath);
 		if ($ret == true){
-			return addslashes($newPath);
+			// according the security issus, it will only store the file name
+			// the download process will not allow to download the file not in $gFilePool 
+			
+			return $recordID . $extension;
+			
+			//return addslashes($newPath);
 		}else{
 			return NULL;
 		}
