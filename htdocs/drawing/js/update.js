@@ -77,7 +77,7 @@ function ResetUpdateRevisionButton(){
 	$("#updateRevisionButton").unbind('click');
 	$( "#updateRevisionButton" ).click(function (event){
 		event.preventDefault();
-		SubmitUpdateForm();
+		SubmitUpdateForm("revision");
 	});
 	// Reset the file name to empty string
 	$( "#fileNameReplace" ).val("");
