@@ -135,7 +135,7 @@
 			<td><label for="descriptionResult">Description</label></td>
 			<td><textarea name="descriptionResult" id="descriptionResult" rows="5" cols="30" maxlength="1023" class="text ui-widget-content ui-corner-all"></textarea></td>
 		</tr>
-		<tr><td colspan="2"  align="right"><button id="updateDrawingButton">Modify Drawing Record(not ready)</button></td></tr>
+		<tr><td colspan="2"  align="right"><button id="updateDrawingButton">Modify Drawing Record</button></td></tr>
 		</table>
 	</fieldset>
 	</form>
