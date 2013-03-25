@@ -7,11 +7,11 @@ function SubmitInsertForm(){
 		"description": $( "#descriptionNew" ).val(),
 		"revisionNo": $("#revisionNoNew").val(),
 		"date": $( "#dateNew").val(),
-		//"fileLocation": $( "#fileLocationNew" ).val(),
+		"fileLocation": $( "#fileLocationNew" ).val(),
 		"typeName": $("#typeNameNew").val(),
 		"workOrder": $("#workOrderNew").val(),
 		"followUp": $("#followUpNew").val(),
-		"fileName" : $("#fileNameNew").val(),
+		//"fileName" : $("#fileNameNew").val(),
 		"op" : "insert"
 	};
 	
@@ -31,11 +31,11 @@ function SubmitInsertForm(){
 				"#descriptionNew",
 				"#revisionNoNew",
 				"#dateNew",
-				//"#fileLocationNew",
+				"#fileLocationNew",
 				"#typeNameNew",
 				"#workOrderNew",
-				"#followUpNew",
-				"#fileNameNew",
+				"#followUpNew"
+				//"#fileNameNew",
 			];
 			ClearValues(IDs);
 			$('#progress').css(
@@ -85,7 +85,8 @@ function InitInsertTab(){
 		});
 	
 	$( "#dateNew" ).datepicker({ dateFormat: "yy-mm-dd" });
-		
+	
+	/*
 	$('#fileupload').fileupload({
 		dataType: 'json',
 		singleFileUploads: false, 
@@ -114,5 +115,6 @@ function InitInsertTab(){
 			);
 		}
 	});
+	*/
 	
 }

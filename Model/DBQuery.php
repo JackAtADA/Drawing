@@ -190,8 +190,9 @@ class CDBQuery{
 		if ($row){
 			$typeID = $row["TypeID"];
 		}else { // no record
-			// because of changing implementation strategy. it will ask user to download the file
-			// instead of asking user to start the default application.
+			// because of changing implementation strategy. it will only display the
+			// the folder of the network store to user.
+			// let user open the file with their own application. 
 			$sqlQuery = sprintf(
 				"Insert Into `FileType` (`TypeName`, `DefaultApplication`) Values ('%s', NULL)",
 				$s_para["typeName"]
@@ -208,7 +209,7 @@ class CDBQuery{
 		
 		
 		// insert record;
-		$fileLocation = $s_para["fileLocation"];
+		//$fileLocation = $s_para["fileLocation"];
 		$workOrder = $this->FormatSQLStringValue($s_para["workOrder"]);
 		$followUp = $this->FormatSQLStringValue($s_para["followUp"]);
 		
@@ -217,10 +218,10 @@ class CDBQuery{
 				`DrawingNo`, `RevisionNo`, `Date`, `FileType`, 
 				`FileLocation`, `WorkOrder`, `FollowUp`
 			) VALUES (
-				'%s', '%s', '%s', '%d', NULL, %s, %s
+				'%s', '%s', '%s', '%d', '%s', %s, %s
 			)",
 			$s_para["drawingNo"], $s_para["revisionNo"], $s_para["date"],
-			$typeID, $workOrder, $followUp
+			$typeID, $s_para["fileLocation"], $workOrder, $followUp
 		);
 		
 		$result = $this->sqlObj->query($sqlQuery);
@@ -233,6 +234,7 @@ class CDBQuery{
 			$recordID = $this->sqlObj->insert_id;
 		}
 		
+		/*
 		// deal with the file location
 		if ($fileLocation != NULL){
 			$newLocation = $this->MoveFileToServerInside($fileLocation, $recordID);
@@ -257,6 +259,7 @@ class CDBQuery{
 				return $ret;
 			}
 		}
+		*/
 		$ret["ret"] = 1;
 		$this->UnlockTables();
 		return $ret;
@@ -365,13 +368,25 @@ class CDBQuery{
 		}
 		$typeID = $tmp["typeID"];
 		
+		$workOrder = $this->FormatSQLStringValue($s_para["workOrder"]);
+		$followUp = $this->FormatSQLStringValue($s_para["followUp"]);
+		$fileLocation = $this->FormatSQLStringValue($s_para["fileLocation"]);
+		
+		// update operation
+		$sqlQuery = sprintf(
+			"Update `DrawingRevision`
+			Set `DrawingNo` = '%s', `RevisionNo` = '%s', `Date` = '%s',
+			`FileType` = %d, `WorkOrder` = %s,	`FollowUp` = %s, `FileLocation` = %s",
+				$s_para["drawingNo"], $s_para["revisionNo"], $s_para["date"],
+				$typeID, $workOrder, $followUp, $fileLocation
+		);
+		
+		$sqlQuery .= sprintf( " Where `recordID` = %d", $s_para["recordID"]);
+		/*
 		// preparing other variable for the update field
 		$fileLocation = NULL;
 		if ($s_para["fileReplaceOption"] == "replaceWithFile"){
 			$fileLocation = $this->MoveFileToServerInside($s_para["fileLocation"], $s_para["recordID"]);
-			//$fileLocation = $this->FormatSQLStringValue($fileLocation);
-			//$ret["error"] = $fileLocation;
-			//return $ret;
 		}
 		// else, it will skip the update option with fileLocation.
 		
@@ -392,7 +407,7 @@ class CDBQuery{
 			$sqlQuery .= sprintf(", `FileLocation` = %s", $fileLocation);
 		}
 		$sqlQuery .= sprintf( " Where `recordID` = %d", $s_para["recordID"]);
-		
+		*/
 		$result = $this->sqlObj->query($sqlQuery);
 		if ($this->sqlObj->error){
 			$ret["error"] = "SQL error:" . $this->sqlObj->error;

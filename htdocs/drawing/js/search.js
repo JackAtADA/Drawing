@@ -20,14 +20,15 @@ function SearchDetailRecordInfo( recordID ){
 			$( "#referenceDrawingNoResult" ).val( record["DrawingNo"] );
 			$( "#revisionNoResult" ).val( record["RevisionNo"] ); 
 			$( "#typeNameResult" ).val( record["TypeName"] );
+			$( "#fileLocationResult" ).show();
 			if ( record["FileLocation"] != null){
-				$( "#fileLocationResult" ).attr( "href", "Controller/download.php?file=" + record["FileLocation"]);
-				$( "#fileLocationResult" ).show();
-			}else{
-				$( "#fileLocationResult" ).hide();
-			}
+				//$( "#fileLocationResult" ).attr( "href", "Controller/download.php?file=" + record["FileLocation"]);
+				$( "#fileLocationResult" ).val(record["FileLocation"]);
+			}//else{
+				//$( "#fileLocationResult" ).hide();
+			//}
 			$("#recordIDResult").val( recordID );
-			//$( "#fileLocationResult" ).val( record["FileLocation"] );
+			$( "#fileLocationResult" ).val( record["FileLocation"] );
 			
 			$( "#dateResult" ).val( record["Date"] );
 			$( "#workOrderResult" ).val( record["WorkOrder"] );
@@ -77,7 +78,9 @@ function SubmitSearchFrom(e){
 						// skip
 					}else if (indexN == "FileLocation"){
 						if (value != null){
-							item.append("<td><a href='Controller/download.php?file=" + value + "'>" + value + "</a></td>");
+							//item.append("<td><a href='Controller/download.php?file=" + value + "'>" + value + "</a></td>");
+							serverPath = "\\\\168.8.204.181\\blueprint\\" 
+							item.append("<td><a href='drawingdb://server=" + serverPath + "&file=" + value + "'>" + value + "</a></td>");
 						}else{
 							item.append("<td></td>");
 						}

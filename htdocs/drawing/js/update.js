@@ -24,6 +24,8 @@ function InitRecordDialog(){
 	
 	
 	$( "#dateResult" ).datepicker({ dateFormat: "yy-mm-dd" });
+	
+	/*
 	$( "#fileReplaceOption" ).buttonset();
 	
 	$( "#fileReplaceOption1" ).click( function (){
@@ -69,6 +71,7 @@ function InitRecordDialog(){
 			}
 		});
 	});
+	*/
 }
 
 function ResetUpdateRevisionButton(){
@@ -101,8 +104,9 @@ function SubmitUpdateForm(updateType){
 			"workOrder": $("#workOrderResult").val(),
 			"followUp": $("#followUpResult").val(),
 			"typeName": $("#typeNameResult").val(),
-			"fileName" : $("#fileNameReplace").val(),
-			"fileReplaceOption" : $( "#fileReplaceOptionSelected" ).val(),
+			//"fileName" : $("#fileNameReplace").val(),
+			//"fileReplaceOption" : $( "#fileReplaceOptionSelected" ).val(),
+			"fileLocation" : $("#fileLocationResult").val(),
 			"recordID" : $("#recordIDResult").val(),
 			"op" : "update"
 		};
