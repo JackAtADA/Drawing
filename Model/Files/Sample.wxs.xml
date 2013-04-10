@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+
+  <Product Name='DrawingDB 1.0' Id='66e87040-f90a-4da3-bb63-bb8e465f5e99' UpgradeCode='dde0d254-500e-426e-b0f3-b6a10614b098'
+    Language='1033' Codepage='1252' Version='1.0.0' Manufacturer='ADA Ltd.'>
+
+    <Package Id='*' Keywords='Installer' Description="ADA's DrawingDB 1.0 Installer"
+      Comments='Foobar is a registered trademark of ADA Ltd.' Manufacturer='ADA Ltd.'
+      InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />
+	
+	<Condition Message="You need to be an administrator to install this product.">
+		Privileged
+	</Condition>
+	
+	<Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' DiskPrompt="CD-ROM #1" />
+	<Property Id='DiskPrompt' Value="ADA's DrawingDB Handler 1.0 Installation [1]" />
+	
+	<Directory Id='TARGETDIR' Name='SourceDir'>
+		<Directory Id='ProgramFilesFolder' Name='PFiles'>
+			<Directory Id='ADA' Name='ADA'>
+				<Directory Id='INSTALLDIR' Name='DrawingDB'>
+					<Component Id='MainExecutable' Guid='ee6575d7-43be-4e88-af69-288584ced2f3'>
+						<File Id='DBHANDLEREXE' Name='drawingDBHandler.exe' DiskId='1' Source='drawingDBHandler.exe' KeyPath='yes'>
+						</File>
+					</Component>
+				</Directory>
+			</Directory>
+		</Directory>
+		<Directory Id="ProgramMenuFolder" Name="Programs">
+			<Directory Id="ProgramMenuDir" Name="DrawingDB">
+				<Component Id="ProgramMenuDir" Guid="81275916-c97b-41fa-8074-6935cef692eb">
+					<RemoveFolder Id='ProgramMenuDir' On='uninstall' />
+					<RegistryValue Root='HKCU' Key='Software\[Manufacturer]\[ProductName]' Type='string' Value='' KeyPath='yes' />
+				</Component>
+			</Directory>
+		</Directory>
+		<Directory Id="DesktopFolder" Name="Desktop" />
+		
+	</Directory>
+	
+	<DirectoryRef Id="TARGETDIR">
+		<Component Id="RegistryEntries" Guid="06c31802-27a1-45e7-a115-0da41f9d35d3">
+			<RegistryKey Root="HKCR"
+						 Key="drawingdb"
+				  ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+				<RegistryValue Type="string" Name="URL protocol" Value="1" KeyPath="yes"/>
+				<RegistryValue Type="string" Value="Default Value"/>
+				<RegistryKey Key="DefaultIcon">
+					<RegistryValue Type="string" Value="&quot;[INSTALLDIR]\drawingDBHandler.exe&quot;,1"/>
+				</RegistryKey>
+				<RegistryKey Key="shell">
+					<RegistryKey Key="open">
+						<RegistryKey Key="command">
+							<RegistryValue Type="string" Value="&quot;[INSTALLDIR]\drawingDBHandler.exe&quot; &quot;%1&quot;"/>
+						</RegistryKey>
+					</RegistryKey>
+				</RegistryKey>
+			</RegistryKey>
+		</Component>
+	</DirectoryRef>
+
+	<Feature Id='Complete' Level='1'>
+		<ComponentRef Id='MainExecutable' />
+		<ComponentRef Id='ProgramMenuDir' />
+		<ComponentRef Id="RegistryEntries" />
+	</Feature>
+  </Product>
+</Wix>
