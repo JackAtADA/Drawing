@@ -97,7 +97,11 @@
             icons: {
                 primary: "ui-icon-search"
             }
-        }).click(SubmitSearchFrom);
+        }).click(function (e){
+        	e.preventDefault();
+        	$("#startRecord").val(0);
+            SubmitSearchFrom();
+        });
 		
 		InitInsertTab();
 	});
@@ -217,7 +221,7 @@
     <div id="tabs-1">
 		<div>
 			<p>If you are the first time to use this database, please download the 
-			<a href="Controller/download.php?file=drawingDBHandler.exe">Client Script (for windows)</a>
+			<a href="Controller/download.php?file=drawingDBHandler.wxs.msi">Client Script (for windows)</a>
 			to handle file protocal</p>
 		</div>
         <p>Search Form</p>
@@ -229,13 +233,15 @@
 			<input type="text" name="description" id="description" value="" class="text ui-widget-content ui-corner-all" />
 			<label for="date">Revision Date (after)</label>
 			<input type="text" name="revisionDate" id="revisionDate" value="" class="text ui-widget-content ui-corner-all" />
-			<input type="hidden" name="op" id="dateOperation" value=">="></input>
+			<input type="checkbox" name="displayAllRevision" id="displayAllRevision" />Display All Revision
 			<button id="search">Search</button>
+			<input type="hidden" name="op" id="dateOperation" value=">=" />
+			<input type="hidden" name="startRecord" id="startRecord" value="0" />
 		</fieldset>
 		</form>
 		<p id="numOfResult"></p>
-		<div id="searchResult">
-		</div>
+		<div id="resultPageIndex"></div>
+		<div id="searchResult"></div>
     </div>
     <div id="tabs-2">
         <p>Insert From</p>

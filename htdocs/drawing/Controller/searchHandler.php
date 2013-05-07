@@ -20,6 +20,8 @@ if ( isset( $_GET["search"] ) && ($_GET["search"] == "range") ){
 	$s_drawingNo = "";
 	$s_description = "";
 	$s_revisionDate = "0000-00-00 00:00:00";
+	$s_displayAllRevision = 0;
+	$s_startRecord = 0;
 	if ( isset($_GET["drawingNo"]) ){
 		$s_drawingNo = addslashes($_GET["drawingNo"]);
 	}
@@ -32,10 +34,17 @@ if ( isset( $_GET["search"] ) && ($_GET["search"] == "range") ){
 	if ( isset($_GET["dateOperation"]) && !empty($_GET["dateOperation"]) ){
 		$s_dateOperation = addslashes($_GET["dateOperation"]);
 	}
+	if (isset($_GET["displayAllRevision"])){
+		$s_displayAllRevision = intval($_GET["dateOperation"]);
+	}
+	if (isset($_GET["startRecord"])){
+		$s_startRecord = intval($_GET["startRecord"]);
+	}
 	
 	$dbQuery = new CDBQuery($gSqlObj);
 	//print_r($gSqlObj);
-	$ret = $dbQuery->RangeSearch($s_drawingNo, $s_description, $s_dateOperation, $s_revisionDate);
+	$ret = $dbQuery->RangeSearch($s_drawingNo, $s_description, $s_dateOperation, $s_revisionDate, 
+			$s_displayAllRevision, $s_startRecord);
 	echo json_encode($ret);
 }else if ( isset( $_GET["search"] ) && ($_GET["search"] == "specific") ){
 	// default value -- no result output

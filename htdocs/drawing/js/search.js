@@ -42,26 +42,34 @@ function SearchDetailRecordInfo( recordID ){
 	}, "json");
 }
 function SubmitSearchFrom(e){
-	e.preventDefault();
+	//e.preventDefault();
 	var drawingNo = $( "#drawingNo" );
 	var description = $( "#description" );
 	var revisionDate = $( "#revisionDate");
 	var dateOperation = $( "#dateOperation" );
+	var displayAllRevision = 0;
+	if ( $("#displayAllRevision").attr("checked") ){
+		displayAllRevision = 1;
+	}
+	var startRecord = $("#startRecord");
 	
 	searchField = {
 		"drawingNo": drawingNo.val(), 
 		"description": description.val(),
 		"revisionDate": revisionDate.val(),
 		"dateOperation": dateOperation.val(),
+		"displayAllRevision": displayAllRevision,
+		"startRecord": startRecord.val(),
 		"search": "range"
 	};
 	
 	$.get("Controller/searchHandler.php", searchField, function(data){
-		//DebugOutput( searchField );
+		DebugOutput( searchField );
 		
 		var searchResult = $( "#searchResult" );
 		searchResult.empty();
 		if ( data.ret == "1"){ // success
+			GeneralPageIndex(data.numRow, startRecord.val());
 			var num = 0;
 			var itemTable = searchResult.append("<table></table>").find("table");
 			itemTable.addClass("jtable");
@@ -74,12 +82,10 @@ function SubmitSearchFrom(e){
 				$.each(record, function(indexN, value){
 					if (indexN == "RecordID"){
 						item.append("<td><button id='record" + record["RecordID"] + "'></button></td>");
-					}else if (indexN == "TypeName"){
-						// skip
 					}else if (indexN == "FileLocation"){
 						if (value != null){
 							//item.append("<td><a href='Controller/download.php?file=" + value + "'>" + value + "</a></td>");
-							serverPath = "\\\\168.8.204.181\\blueprint\\" 
+							serverPath = "\\\\168.8.204.98\\blueprint\\" 
 							item.append("<td><a href='drawingdb://server=" + serverPath + "&file=" + value + "'>" + value + "</a></td>");
 						}else{
 							item.append("<td></td>");
@@ -93,7 +99,7 @@ function SubmitSearchFrom(e){
 				InitResultButton( record["RecordID"]  );
 			});
 			ColoringAllJTable();
-			$("#numOfResult").html("Search Ruselts:" + num);
+			$("#numOfResult").html("Search Ruselts:" + data.numRow);
 		}else{
 			if (data.error == "Permission deny, user has not login"){
 				alert(data.error);
@@ -102,6 +108,20 @@ function SubmitSearchFrom(e){
 		}
 		
 	}, "json");
+}
+
+function GeneralPageIndex(numRow, startRecord){
+	var numPage = Math.floor(numRow / 30);
+	var resultPageIndex = $("#resultPageIndex");
+	resultPageIndex.html("");
+	for (i = 1; i<= numPage;i++){
+		var pageButton = $("<button />");
+		pageButton.html(i);
+		pageButton.button();
+		resultPageIndex.append(pageButton);
+	}
+	//$("#resultPageIndex").html();
+	return numPage;
 }
 
 function ColoringAllJTable(){

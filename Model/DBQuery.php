@@ -17,7 +17,9 @@ class CDBQuery{
 		$this->loginObj = new CLogin($this->sqlObj);
 	}
 	public function RangeSearch($s_drawingNo, $s_description, 
-								$s_dateOperation, $s_revisionDate){						
+								$s_dateOperation, $s_revisionDate,
+								$s_displayAllRevision, 
+								$startRecord = 0, $limit = 30){						
 		$loginObj = new CLogin($this->sqlObj);
 		$ret = array();
 		$ret["rowResult"] = NULL;
@@ -29,14 +31,12 @@ class CDBQuery{
 		
 		$loginObj->RefreshLoginTime();
 		
-		$sqlQuery = "select `DrawingRevision`.`RecordID`, 
+		$sqlQuery = "select SQL_CALC_FOUND_ROWS `DrawingRevision`.`RecordID`, 
 					 `Drawing`.`DrawingNo`, `Drawing`.`Description`,
-					 Date(`DrawingRevision`.`Date`) as `Date`, `DrawingRevision`.`RevisionNo`,
-					 `DrawingRevision`.`FileLocation`, `FileType`.`TypeName`
+					 Date(`DrawingRevision`.`Date`) as `Date`, Max(`DrawingRevision`.`RevisionNo`),
+					 `DrawingRevision`.`FileLocation`
 					 from `Drawing` left join `DrawingRevision`
 					 on `Drawing`.`DrawingNo` = `DrawingRevision`.`DrawingNo`
-					 left join `FileType` 
-					 on `DrawingRevision`.`FileType` = `FileType`.`TypeID`
 					 where 1 ";
 					
 		$sqlQuery .= sprintf("and `Drawing`.`DrawingNo` like '%%%s%%' 
@@ -44,26 +44,39 @@ class CDBQuery{
 							  and `DrawingRevision`.`Date` %s '%s'",
 							  $s_drawingNo, $s_description, $s_dateOperation,
 							  $s_revisionDate);
-							  
-		$sqlQuery .= "order by `Drawing`.`DrawingNo` asc, `DrawingRevision`.`Date` desc";
+		
+		$sqlQuery .= "Group by `Drawing`.`DrawingNo` ";
+		$sqlQuery .= "order by `DrawingRevision`.`Date` Desc ";
+		//$sqlQuery .= "order by `Drawing`.`DrawingNo` asc, `DrawingRevision`.`Date` ";
+		$sqlQuery .= sprintf("Limit %d, %d", $startRecord, $limit);
 		$result = $this->sqlObj->query($sqlQuery);
-		//$logObj = new CLog("C:\\xampp\\Model\\Log\\Log.txt");
-		//$logObj->WriteLog($sqlQuery);
 		
 		if ($this->sqlObj->error){
 			$ret["error"] = "SQL error:" . $this->sqlObj->error;
 			//echo "<br>" . $sqlQuery;
 			return $ret;
-		}else{
-			$rowResult = array();
-			//while($row = $result->fetch_row() ){
-			while($row = $result->fetch_assoc() ){
-				$rowResult[] = $row; // ignore the final row which is null
-			}
-			$ret["rowResult"] = $rowResult;
-			$ret["ret"] = 1;
+		}
+		
+		// prepare result
+		
+		$rowResult = array();
+		//while($row = $result->fetch_row() ){
+		while($row = $result->fetch_assoc() ){
+			$rowResult[] = $row; // ignore the final row which is null
+		}
+		$ret["rowResult"] = $rowResult;
+		
+		// prepare total number.
+		$sqlQuery = "SELECT FOUND_ROWS()";
+		$result = $this->sqlObj->query($sqlQuery);
+		if ($this->sqlObj->error){
+			$ret["error"] = "SQL error:" . $this->sqlObj->error;
 			return $ret;
 		}
+		$row = $result->fetch_row();
+		$ret["numRow"] = $row[0];
+		$ret["ret"] = 1;
+		return $ret;
 	}
 	
 	public function SpecificSearch($s_recordID){

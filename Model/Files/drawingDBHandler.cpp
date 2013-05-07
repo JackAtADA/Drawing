@@ -25,7 +25,7 @@ int main(int argc, char * argv[]){
     if (argc > 1){
         CreateConnection(argv[1]);
     }else{
-        CreateRegisterFile();
+        //CreateRegisterFile();
     }
     system("pause");
     return 0;
@@ -102,9 +102,10 @@ int CreateConnection(const char * protocol ){
 		return 0;
 	}
 	
-	command.assign("explorer /select,\"");
+	//command.assign("explorer /select,\"");
+	command.assign("start ");
 	command.append(serverPath);
-	command.append("\\");
+	command.append("\\\"");
 	command.append(filePath);
 	command.append("\"");
 	cout << "Process cmd:" << command << endl;
@@ -117,6 +118,8 @@ int CreateConnection(const char * protocol ){
 }
 
 int CreateRegisterFile(){
+    // no long use this function
+    // the protocol is registered with install msi
 	//wchar_t cwd[1024];
 	char cwd[1024];
 	//wchar_t *ret = _wgetcwd( cwd, 1024 );
@@ -161,29 +164,7 @@ int CreateRegisterFile(){
     }
     content.assign("\\\" \\\"\%1\\\"\"");
     fwrite(content.c_str(), sizeof(char), content.length(), fp);
-	/*
-	path.assign(cwd);
-	path.append(L"\\drawingDBHandler.exe");
-	const wchar_t *index = path.c_str();
-	wchar_t tmp[1024];
-	char utf8Buffer[1024];
-	while(*index != L'\0'){
-		tmp[0] = index[0];  // copy the character to tmp
-		tmp[1] = L'\0';		// terminate with NULL
-		WideCharToMultiByte (CP_UTF8,0,tmp,-1,utf8Buffer,1024,NULL,NULL);
-		fwrite(utf8Buffer, sizeof(char), strlen(utf8Buffer), fp);
-		if ( *index == L'\\' ){
-			tmp[0] = L'\\';
-			WideCharToMultiByte (CP_UTF8,0,tmp,-1,utf8Buffer,1024,NULL,NULL);
-			fwrite(utf8Buffer, sizeof(char), strlen(utf8Buffer), fp);
-		}
-		index++;
-    }
-    content.assign("\\\" \\\"\%1\\\"\"");
-    fwrite(content.c_str(), sizeof(char), content.length(), fp);
-        
-    //@="\"C:\\Program Files\\DrawingDBHandler\\drawingDBHandler.exe\" \"%1\""
-	*/
+
 	fclose(fp);
 	system("Reg import drawingDBHandler.reg");
 
