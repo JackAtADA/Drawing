@@ -31,22 +31,56 @@ class CDBQuery{
 		
 		$loginObj->RefreshLoginTime();
 		
-		$sqlQuery = "select SQL_CALC_FOUND_ROWS `DrawingRevision`.`RecordID`, 
+		if ($s_displayAllRevision){
+			$sqlQuery = "select SQL_CALC_FOUND_ROWS `DrawingRevision`.`RecordID`,
 					 `Drawing`.`DrawingNo`, `Drawing`.`Description`,
-					 Date(`DrawingRevision`.`Date`) as `Date`, Max(`DrawingRevision`.`RevisionNo`),
+					 Date(`DrawingRevision`.`Date`) as `Date`, `DrawingRevision`.`RevisionNo`,
 					 `DrawingRevision`.`FileLocation`
 					 from `Drawing` left join `DrawingRevision`
 					 on `Drawing`.`DrawingNo` = `DrawingRevision`.`DrawingNo`
 					 where 1 ";
-					
-		$sqlQuery .= sprintf("and `Drawing`.`DrawingNo` like '%%%s%%' 
+			
+			$sqlQuery .= sprintf("and `Drawing`.`DrawingNo` like '%%%s%%'
 							  and `Drawing`.`Description` like '%%%s%%'
 							  and `DrawingRevision`.`Date` %s '%s'",
-							  $s_drawingNo, $s_description, $s_dateOperation,
-							  $s_revisionDate);
-		
-		$sqlQuery .= "Group by `Drawing`.`DrawingNo` ";
-		$sqlQuery .= "order by `DrawingRevision`.`Date` Desc ";
+					$s_drawingNo, $s_description, $s_dateOperation,
+					$s_revisionDate);
+		}else{
+			/*
+			$sqlQuery = "select SQL_CALC_FOUND_ROWS `DrawingRevision`.`RecordID`, 
+					 `Drawing`.`DrawingNo`, `Drawing`.`Description`,
+					 Max(Date(`DrawingRevision`.`Date`)) as `Date`, Max(`DrawingRevision`.`RevisionNo`),
+					 `DrawingRevision`.`FileLocation`
+					 from `Drawing` left join `DrawingRevision`
+					 on `Drawing`.`DrawingNo` = `DrawingRevision`.`DrawingNo`
+					 where 1 ";
+					 */
+			
+			// temp table `ss` retrieve the partial record with latest revision in same group
+			// 		( only get `DrawingNo`, `RevisionNo`)   
+			// temp table `LatestRev` retrieve the full record with latest revision in each group
+			// temp table `LatestRev` is used for 
+			$sqlQuery = sprintf(
+				"
+				select SQL_CALC_FOUND_ROWS 
+					`LatestRev`.`RecordID`, 
+					`LatestRev`.`DrawingNo`, `Drawing`.`Description`,
+					`LatestRev`.`Date`, `LatestRev`.`RevisionNo`,
+					`LatestRev`.`FileLocation` 
+				From `Drawing` inner join (
+					select `DrawingRevision`.`RecordID`, `DrawingRevision`.`DrawingNo`, Date(`DrawingRevision`.`Date`) as `Date`, `DrawingRevision`.`RevisionNo`, `DrawingRevision`.`FileLocation` 
+					From `DrawingRevision` inner join(
+						select `DrawingRevision`.`DrawingNo`, Max(`DrawingRevision`.`RevisionNo`) as `RevisionNo`
+						from `DrawingRevision`
+						where `DrawingRevision`.`DrawingNo` like '%%%s%%' and `DrawingRevision`.`Date` %s '%s'
+						Group by `DrawingRevision`.`DrawingNo`
+					) as `ss` on `DrawingRevision`.`DrawingNo` = `ss`.`DrawingNo` and `DrawingRevision`.`RevisionNo` = `ss`.`RevisionNo`
+				) as `LatestRev` on `Drawing`.`DrawingNo` = `LatestRev`.`DrawingNo`
+				where `Drawing`.`Description` like '%%%s%%'",
+				$s_drawingNo, $s_dateOperation, $s_revisionDate, $s_description
+				);
+		}
+		$sqlQuery .= "order by `Date` Desc ";
 		//$sqlQuery .= "order by `Drawing`.`DrawingNo` asc, `DrawingRevision`.`Date` ";
 		$sqlQuery .= sprintf("Limit %d, %d", $startRecord, $limit);
 		$result = $this->sqlObj->query($sqlQuery);

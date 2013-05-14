@@ -35,7 +35,7 @@ if ( isset( $_GET["search"] ) && ($_GET["search"] == "range") ){
 		$s_dateOperation = addslashes($_GET["dateOperation"]);
 	}
 	if (isset($_GET["displayAllRevision"])){
-		$s_displayAllRevision = intval($_GET["dateOperation"]);
+		$s_displayAllRevision = intval($_GET["displayAllRevision"]);
 	}
 	if (isset($_GET["startRecord"])){
 		$s_startRecord = intval($_GET["startRecord"]);

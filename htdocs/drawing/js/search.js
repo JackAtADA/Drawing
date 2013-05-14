@@ -69,7 +69,7 @@ function SubmitSearchFrom(e){
 		var searchResult = $( "#searchResult" );
 		searchResult.empty();
 		if ( data.ret == "1"){ // success
-			GeneralPageIndex(data.numRow, startRecord.val());
+			GeneralPageIndex(data.numRow, parseInt(startRecord.val()));
 			var num = 0;
 			var itemTable = searchResult.append("<table></table>").find("table");
 			itemTable.addClass("jtable");
@@ -85,7 +85,7 @@ function SubmitSearchFrom(e){
 					}else if (indexN == "FileLocation"){
 						if (value != null){
 							//item.append("<td><a href='Controller/download.php?file=" + value + "'>" + value + "</a></td>");
-							serverPath = "\\\\168.8.204.98\\blueprint\\" 
+							serverPath = "\\\\168.8.204.98\\blueprint\\";
 							item.append("<td><a href='drawingdb://server=" + serverPath + "&file=" + value + "'>" + value + "</a></td>");
 						}else{
 							item.append("<td></td>");
@@ -111,13 +111,29 @@ function SubmitSearchFrom(e){
 }
 
 function GeneralPageIndex(numRow, startRecord){
-	var numPage = Math.floor(numRow / 30);
+	var numPage = Math.ceil(numRow / 30);
 	var resultPageIndex = $("#resultPageIndex");
 	resultPageIndex.html("");
+	var currentPage = Math.ceil(  (startRecord + 1) / 30 );
+	var ceilInput = (startRecord + 1) / 30;
+	DebugOutput("start record 0:" + startRecord);
+	DebugOutput("current page:" + currentPage );
+	DebugOutput("ceil input:" + ceilInput);
+	// startRecord grow from 0, but in the display webpage, it should start from 1 
 	for (i = 1; i<= numPage;i++){
 		var pageButton = $("<button />");
 		pageButton.html(i);
 		pageButton.button();
+		pageButton.bind("click", {id:i}, function(event){
+			event.preventDefault();
+	        $("#startRecord").val((event.data.id - 1) * 30);
+	        DebugOutput("start record 1:" + (event.data.id - 1) * 30);
+	        SubmitSearchFrom();
+		});
+		if (i == currentPage){
+			pageButton.addClass("ui-state-active");
+			pageButton.button("disable");
+		}
 		resultPageIndex.append(pageButton);
 	}
 	//$("#resultPageIndex").html();

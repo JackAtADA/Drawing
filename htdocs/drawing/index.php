@@ -233,8 +233,8 @@
 			<input type="text" name="description" id="description" value="" class="text ui-widget-content ui-corner-all" />
 			<label for="date">Revision Date (after)</label>
 			<input type="text" name="revisionDate" id="revisionDate" value="" class="text ui-widget-content ui-corner-all" />
-			<input type="checkbox" name="displayAllRevision" id="displayAllRevision" />Display All Revision
-			<button id="search">Search</button>
+			<br><input type="checkbox" name="displayAllRevision" id="displayAllRevision" />Display All Revision
+			<br><button id="search">Search</button>
 			<input type="hidden" name="op" id="dateOperation" value=">=" />
 			<input type="hidden" name="startRecord" id="startRecord" value="0" />
 		</fieldset>
